@@ -49,6 +49,6 @@ repos:
       hooks:
           - id: pytest
             name: pytest
-            entry: bash -c 'poetry run pytest'
+            entry: poetry run pytest
             language: system
             types: [python]

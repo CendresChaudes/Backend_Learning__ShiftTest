@@ -35,6 +35,9 @@ docs = [
     "sphinx (==8.2.3)",
 ]
 
+[tool.alembic]
+script_location = "src/core/db/migrations/"
+
 [tool.black]
 line-length = 88
 target-version = ["py311"]
@@ -66,3 +69,8 @@ ignore-semiprivate = true
 ignore-setters = true
 style = "sphinx"
 verbose = 2
+
+[tool.pytest]
+addopts = ["--cov=src", "--cov-report=term-missing", "--cov-report=html"]
+python_files = ["test_*.py"]
+testpaths = ["tests/"]
