@@ -13,6 +13,6 @@ RUN poetry install --no-root --only main
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE ${API_PORT_INTERNAL}
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "${API_PORT_INTERNAL}"]
