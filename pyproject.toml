@@ -71,6 +71,5 @@ style = "sphinx"
 verbose = 2
 
 [tool.pytest]
-addopts = ["--cov=src", "--cov-report=term-missing", "--cov-report=html"]
 python_files = ["test_*.py"]
 testpaths = ["tests/"]
