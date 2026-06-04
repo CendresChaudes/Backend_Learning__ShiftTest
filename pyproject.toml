@@ -39,6 +39,12 @@ docs = [
 line-length = 88
 target-version = ["py311"]
 
+[tool.mypy]
+files = ["src/", "tests/"]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = false
+
 [tool.isort]
 profile = "black"
 src_paths = ["app", "tests"]

@@ -6,6 +6,6 @@ app = FastAPI()
 
 
 @app.get("/")
-def root():
+def root() -> str:
     """Возвращает приветственное сообщение для корневого пути."""
     return "Hello world!"
