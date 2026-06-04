@@ -10,7 +10,7 @@ repos:
       hooks:
           - id: black
             name: black
-            entry: bash -c 'files="$(printf "%s\n" "$@" | grep -E "\.py$" | || true)"; [ -z "$files" ] && exit 0; poetry run black $files'
+            entry: bash -c 'files="$(printf "%s\n" "$@" | grep -E "\.py$" || true)"; [ -z "$files" ] && exit 0; poetry run black $files'
             language: system
             types: [python]
             pass_filenames: true
@@ -34,7 +34,7 @@ repos:
       hooks:
           - id: mypy
             name: mypy
-            entry: bash -c 'files="$(printf "%s\n" "$@" | grep -E "\.py$" | || true)"; [ -z "$files" ] && exit 0; poetry run mypy $files'
+            entry: bash -c 'files="$(printf "%s\n" "$@" | grep -E "\.py$" || true)"; [ -z "$files" ] && exit 0; poetry run mypy $files'
             language: system
             types: [python]
             pass_filenames: true
