@@ -47,7 +47,7 @@ no_implicit_optional = false
 
 [tool.isort]
 profile = "black"
-src_paths = ["app", "tests"]
+src_paths = ["src/", "tests/"]
 
 [tool.interrogate]
 color = true
@@ -65,4 +65,4 @@ ignore-property-decorators = true
 ignore-semiprivate = true
 ignore-setters = true
 style = "sphinx"
-verbose = 1
+verbose = 2
