@@ -36,9 +36,6 @@ docs = [
     "sphinx (==8.2.3)",
 ]
 
-[tool.alembic]
-script_location = "src/core/db/migrations/"
-
 [tool.black]
 line-length = 88
 target-version = ["py311"]
