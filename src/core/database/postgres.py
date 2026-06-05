@@ -7,9 +7,9 @@ from sqlalchemy import DateTime, Integer
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-from core.configs.settings import settings
+from ..configs.settings import settings
 
-engine = create_async_engine(settings.postgres_url)
+engine = create_async_engine(settings.db_url)
 
 AsyncSessionLocal = async_sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False

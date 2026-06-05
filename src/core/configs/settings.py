@@ -6,16 +6,19 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Глобальные настройки приложения, загружаемые из переменных окружения."""
 
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-    )
+    DB_USER: str = ""
+    DB_PASS: str = ""
+    DB_HOST: str = ""
+    DB_NAME: str = ""
+    DB_PORT: str = ""
 
-    postgres_user: str = ""
-    postgres_password: str = ""
-    postgres_host: str = ""
-    postgres_db: str = ""
-    postgres_url: str = ""
+    @property
+    def db_url(self) -> str:
+        """Метод для получения строки подключения к базе данных."""
+
+        return f"postgresql+psycopg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"  # noqa: E501
+
+    model_config = SettingsConfigDict(env_file=".env")
 
 
 settings = Settings()
