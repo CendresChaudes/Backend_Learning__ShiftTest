@@ -39,7 +39,7 @@ class RoomRepository:
         return room
 
     def update(self, room: RoomEntity, title: str) -> RoomEntity:
-        """Обновить комнату."""
+        """Редактировать комнату."""
 
         room.title = title
 

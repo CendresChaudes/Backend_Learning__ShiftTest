@@ -1,4 +1,4 @@
-"""Модель слота."""
+"""Модель временного слота комнаты."""
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
@@ -7,7 +7,7 @@ from src.core.database.base_entity import BaseEntity
 
 
 class SlotEntity(BaseEntity):
-    """Модель слота."""
+    """Модель временного слота комнаты."""
 
     __tablename__ = "slots"
 

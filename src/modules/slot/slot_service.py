@@ -1,4 +1,4 @@
-"""Сервис для работы с слотами."""
+"""Сервис для работы с временными слотами комнаты."""
 
 from typing import Annotated
 
@@ -15,7 +15,7 @@ class NotFoundError(Exception):
 
 
 class SlotService:
-    """Сервис для работы с слотами."""
+    """Сервис для работы с временными слотами."""
 
     def __init__(self, db: Annotated[AsyncSession, Depends(get_db)]) -> None:
         """Инициализация сервиса."""
@@ -25,7 +25,7 @@ class SlotService:
         self.room_repository = RoomRepository(db=db)
 
     async def get_all(self, room_id: int) -> list[SlotDTO]:
-        """Получить все слоты."""
+        """Получить все временные слоты."""
 
         room = await self.room_repository.get_by_id(room_id=room_id)
 
@@ -37,7 +37,7 @@ class SlotService:
         return [SlotDTO.model_validate(slot, from_attributes=True) for slot in slots]
 
     async def create(self, room_id: int, payload: SlotCreateDTO) -> SlotDTO:
-        """Создать слот."""
+        """Создать временной слот."""
 
         room = await self.room_repository.get_by_id(room_id=room_id)
 
@@ -50,7 +50,7 @@ class SlotService:
         return SlotDTO.model_validate(slot, from_attributes=True)
 
     async def update(self, slot_id: int, payload: SlotUpdateDTO) -> SlotDTO:
-        """Обновить слот."""
+        """Редактировать временной слот."""
 
         slot = await self.slot_repository.get_by_id(slot_id=slot_id)
 
@@ -72,7 +72,7 @@ class SlotService:
         return SlotDTO.model_validate(slot, from_attributes=True)
 
     async def delete(self, slot_id: int) -> None:
-        """Удалить слот."""
+        """Удалить временной слот."""
 
         slot = await self.slot_repository.get_by_id(slot_id=slot_id)
 

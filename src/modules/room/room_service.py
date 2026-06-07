@@ -39,7 +39,7 @@ class RoomService:
         return RoomDTO.model_validate(room, from_attributes=True)
 
     async def update(self, room_id: int, payload: RoomUpdateDTO) -> RoomDTO:
-        """Обновить комнату."""
+        """Редактировать комнату."""
 
         room = await self.repository.get_by_id(room_id=room_id)
 

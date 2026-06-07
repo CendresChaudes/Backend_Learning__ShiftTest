@@ -22,7 +22,16 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     await engine.dispose()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    lifespan=lifespan,
+    version="0.1.0",
+    title="ShiftTest",
+    description="API приложения тестового задания для бэкенда на Python",
+    contact={
+        "name": "Роман Пронин",
+        "email": "romqaaa1337@gmail.com",
+    },
+)
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(router=database_router)
 api_router.include_router(router=room_router)

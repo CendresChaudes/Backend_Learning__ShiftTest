@@ -1,7 +1,7 @@
 [project]
 name = "backend-learning-shift_test"
 version = "0.1.0"
-description = "Python Backend app for Shift event"
+description = "Тестовое задание для бэкенда на Python"
 authors = [ { name = "Romeo", email = "romqaaa1337@gmail.com" } ]
 readme = "README.md"
 requires-python = ">=3.11"

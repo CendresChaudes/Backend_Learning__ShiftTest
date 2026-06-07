@@ -12,11 +12,12 @@ from .database_dto import PingDTO
 HTTP_200_MESSAGE = "БД доступна :)"
 HTTP_503_MESSAGE = "БД недоступна :("
 
-router = APIRouter(prefix="/ping")
+router = APIRouter(tags=["Проверки работоспособности"])
 
 
 @router.get(
-    "/",
+    path="/ping",
+    summary="Проверить доступность базы данных",
     responses={
         status.HTTP_200_OK: {"description": HTTP_200_MESSAGE},
         status.HTTP_503_SERVICE_UNAVAILABLE: {"description": HTTP_503_MESSAGE},

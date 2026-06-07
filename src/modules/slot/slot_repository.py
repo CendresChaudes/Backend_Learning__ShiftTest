@@ -1,4 +1,4 @@
-"""Репозиторий для работы с слотами."""
+"""Репозиторий для работы с временными слотами комнаты."""
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,7 +13,7 @@ class SlotRepository:
         self.db = db
 
     async def get_all(self, room_id: int) -> list[SlotEntity]:
-        """Получить все слоты."""
+        """Получить все временные слоты."""
 
         query = select(SlotEntity).where(SlotEntity.room_id == room_id)
         response = await self.db.execute(statement=query)
@@ -22,7 +22,7 @@ class SlotRepository:
         return result
 
     async def get_by_id(self, slot_id: int) -> SlotEntity | None:
-        """Получить слоты по id."""
+        """Получить временной слот по id."""
 
         query = select(SlotEntity).where(SlotEntity.id == slot_id)
         response = await self.db.execute(statement=query)
@@ -31,7 +31,7 @@ class SlotRepository:
         return result
 
     def create(self, time: str, room_id: int) -> SlotEntity:
-        """Создать слот."""
+        """Создать временной слот."""
 
         slot = SlotEntity(time=time, room_id=room_id)
         self.db.add(instance=slot)
@@ -41,7 +41,7 @@ class SlotRepository:
     def update(
         self, slot: SlotEntity, time: str | None, room_id: int | None
     ) -> SlotEntity:
-        """Обновить слот."""
+        """Редактировать временной слот."""
 
         if time is not None:
             slot.time = time
@@ -52,7 +52,7 @@ class SlotRepository:
         return slot
 
     async def delete(self, slot: SlotEntity) -> None:
-        """Удалить слот."""
+        """Удалить временной слот."""
 
         query = delete(SlotEntity).where(SlotEntity.id == slot.id)
         await self.db.execute(statement=query)
