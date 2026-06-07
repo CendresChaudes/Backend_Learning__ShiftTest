@@ -20,6 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
+
     rooms_table = sa.table(
         "rooms",
         sa.column("title", sa.String),
@@ -30,19 +31,23 @@ def upgrade() -> None:
         rooms_table,
         [
             {
+                "id": 1,
                 "title": "Малый зал",
                 "description": "Небольшая переговорная для 2-4 человек.",
             },
-            {"title": "Большой зал", "description": None},
+            {"id": 2, "title": "Большой зал", "description": None},
             {
+                "id": 3,
                 "title": "Комната отдыха",
                 "description": "Зона для отдыха между встречами.",
             },
             {
+                "id": 4,
                 "title": "Серверная",
                 "description": "Техническое помещение (не предназначено для бронирования).",
             },
             {
+                "id": 5,
                 "title": "Конференц-зал",
                 "description": "Зал для проведения крупных мероприятий и вебинаров.",
             },
@@ -52,6 +57,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Downgrade schema."""
+
     op.execute("""
             DELETE FROM rooms
             WHERE title IN (
