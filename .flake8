@@ -9,7 +9,8 @@ exclude =
     dist,
     .mypy_cache,
     .pytest_cache,
-    docs/conf.py
+    docs/conf.py,
+    src/core/database/migrations/versions/*
 extend-ignore = E203
 inline-quotes = double
 max-doc-length = 79
