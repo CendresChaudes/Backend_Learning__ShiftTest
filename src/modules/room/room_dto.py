@@ -17,3 +17,6 @@ class RoomDTO(RoomCreateDTO):
     """Схема для создания комнаты."""
 
     id: int
+
+
+__all__ = ["RoomCreateDTO", "RoomUpdateDTO", "RoomDTO"]

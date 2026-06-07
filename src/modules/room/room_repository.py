@@ -50,3 +50,6 @@ class RoomRepository:
 
         query = delete(RoomEntity).where(RoomEntity.id == room.id)
         await self.db.execute(statement=query)
+
+
+__all__ = ["RoomRepository"]

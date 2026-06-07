@@ -24,3 +24,6 @@ class BaseEntity(DeclarativeBase):
         cols = [f"{col}={getattr(self, col)}" for col in self.__table__.columns.keys()]
 
         return f"<{self.__class__.__name__} {','.join(cols)}>"
+
+
+__all__ = ["BaseEntity"]

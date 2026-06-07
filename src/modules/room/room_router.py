@@ -46,3 +46,6 @@ async def delete_room(
     """Удалить комнату."""
 
     await room_service.delete(room_id=room_id)
+
+
+__all__ = ["router"]

@@ -12,3 +12,6 @@ class RoomEntity(BaseEntity):
 
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str] = mapped_column(default=None, nullable=True)
+
+
+__all__ = ["RoomEntity"]

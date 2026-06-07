@@ -7,3 +7,6 @@ class PingDTO(BaseModel):
     """Схема ответа для эндпоинта /ping."""
 
     status: str
+
+
+__all__ = ["PingDTO"]

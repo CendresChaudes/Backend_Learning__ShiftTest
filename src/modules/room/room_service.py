@@ -61,3 +61,6 @@ class RoomService:
 
         await self.repository.delete(room=room)
         await self.db.commit()
+
+
+__all__ = ["RoomService"]
