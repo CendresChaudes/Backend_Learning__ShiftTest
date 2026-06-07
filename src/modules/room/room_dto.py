@@ -14,7 +14,7 @@ class RoomUpdateDTO(RoomCreateDTO):
 
 
 class RoomDTO(RoomCreateDTO):
-    """Схема для создания комнаты."""
+    """Схема комнаты."""
 
     id: int
 

@@ -8,6 +8,7 @@ from sqlalchemy import engine_from_config, pool
 from src.core.configs.settings import settings
 from src.core.database.base_entity import BaseEntity
 from src.modules.room.room_entity import RoomEntity  # noqa
+from src.modules.slot.slot_entity import SlotEntity  # noqa
 
 config = context.config
 

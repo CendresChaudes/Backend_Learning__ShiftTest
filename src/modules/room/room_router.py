@@ -1,8 +1,17 @@
+"""Роутер для комнат."""
+
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from .room_dependencies import get_room_service
+from .room_dependencies import (
+    SlotCreateDTO,
+    SlotDTO,
+    SlotService,
+    SlotUpdateDTO,
+    get_room_service,
+    get_slot_service,
+)
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
 from .room_service import RoomService
 
@@ -46,6 +55,47 @@ async def delete_room(
     """Удалить комнату."""
 
     await room_service.delete(room_id=room_id)
+
+
+@router.get("/{room_id}/slots")
+async def get_slots(
+    room_id: int,
+    slot_service: Annotated[SlotService, Depends(get_slot_service)],
+) -> list[SlotDTO]:
+    """Получить все слоты комнаты."""
+
+    return await slot_service.get_all(room_id=room_id)
+
+
+@router.post("/{room_id}/slots")
+async def create_slot(
+    room_id: int,
+    payload: SlotCreateDTO,
+    slot_service: Annotated[SlotService, Depends(get_slot_service)],
+) -> SlotDTO:
+    """Создать слот для комнаты."""
+
+    return await slot_service.create(room_id=room_id, payload=payload)
+
+
+@router.patch("/{room_id}/slots/{slot_id}")
+async def update_slot(
+    slot_id: int,
+    payload: SlotUpdateDTO,
+    slot_service: Annotated[SlotService, Depends(get_slot_service)],
+) -> SlotDTO:
+    """Обновить слот для комнаты."""
+
+    return await slot_service.update(slot_id=slot_id, payload=payload)
+
+
+@router.delete("/{room_id}/slots/{slot_id}")
+async def delete_slot(
+    slot_id: int, slot_service: Annotated[SlotService, Depends(get_slot_service)]
+) -> None:
+    """Удалить слот для комнаты."""
+
+    await slot_service.delete(slot_id=slot_id)
 
 
 __all__ = ["router"]
