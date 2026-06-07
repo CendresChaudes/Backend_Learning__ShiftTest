@@ -17,7 +17,8 @@ coverage.xml
 *,cover
 *.log
 .git*
-tests
-scripts
-postman
+tests/
+scripts/
+!scripts/init.sh
+postman/
 ./postgres-data
