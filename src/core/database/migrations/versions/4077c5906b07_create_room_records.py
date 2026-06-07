@@ -19,7 +19,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    """Upgrade schema."""
+    """Накат миграции."""
 
     rooms_table = sa.table(
         "rooms",
@@ -56,7 +56,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    """Downgrade schema."""
+    """Откат миграции."""
 
     op.execute("""
             DELETE FROM rooms
