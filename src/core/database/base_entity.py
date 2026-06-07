@@ -2,6 +2,7 @@
 
 from datetime import datetime, timezone
 
+from sqlalchemy import text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -11,9 +12,12 @@ class BaseEntity(DeclarativeBase):
     __abstract__ = True
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=text("TIMEZONE('utc', now())")
+    )
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)
+        server_default=text("TIMEZONE('utc', now())"),
+        onupdate=datetime.now(timezone.utc),
     )
 
     def __repr__(self) -> str:
