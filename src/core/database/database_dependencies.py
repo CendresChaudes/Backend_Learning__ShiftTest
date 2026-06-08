@@ -4,6 +4,8 @@ from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.auth.user_entity import UserEntity
+
 from .database_session import AsyncSessionLocal
 
 
@@ -14,4 +16,4 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-__all__ = ["get_db"]
+__all__ = ["UserEntity", "get_db"]

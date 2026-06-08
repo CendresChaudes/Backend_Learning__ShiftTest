@@ -1,7 +1,12 @@
 """Репозиторий для работы с пользователями."""
 
+from typing import Annotated
+
+from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.database.database_dependencies import get_db
 
 from .user_entity import ERole, UserEntity
 
@@ -68,4 +73,10 @@ class UserRepository:
     #     await self.db.execute(statement=query)
 
 
-__all__ = ["UserRepository"]
+def get_user_repository(db: Annotated[AsyncSession, Depends(get_db)]) -> UserRepository:
+    """Для инъекции зависимости UserRepository."""
+
+    return UserRepository(db)
+
+
+__all__ = ["UserRepository", "get_user_repository"]

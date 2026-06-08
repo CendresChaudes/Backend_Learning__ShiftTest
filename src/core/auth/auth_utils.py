@@ -1,6 +1,7 @@
 """Утилитарные функции для аутентификации и авторизации."""
 
 from datetime import datetime, timedelta, timezone
+from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -9,7 +10,7 @@ from jose import JWTError, jwt
 from src.core.configs.settings import settings
 
 from .user_entity import ERole, UserEntity
-from .user_repository import UserRepository
+from .user_repository import UserRepository, get_user_repository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -30,8 +31,8 @@ def create_token(user_id: int, mail: str, role: ERole) -> str:
 
 
 async def get_current_user(
-    user_repository: UserRepository,
-    token: str = Depends(oauth2_scheme),
+    token: Annotated[str, Depends(oauth2_scheme)],
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
 ) -> UserEntity:
     """Получает пользователя по JWT-токену."""
 
@@ -50,7 +51,7 @@ async def get_current_user(
     except (JWTError, KeyError, ValueError) as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Невалидный токен",
         ) from error
 
     user = await user_repository.get_by_id(user_id=user_id)
@@ -58,7 +59,7 @@ async def get_current_user(
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
+            detail="Пользователя не существует",
         )
 
     return user
