@@ -47,11 +47,11 @@ async def get_current_user(
         if not isinstance(user_id, int):
             raise TypeError("'user_id' должен быть числом")
 
-    except (JWTError, KeyError, ValueError) as exception:
+    except (JWTError, KeyError, ValueError) as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
-        ) from exception
+        ) from error
 
     user = await user_repository.get_by_id(user_id=user_id)
 

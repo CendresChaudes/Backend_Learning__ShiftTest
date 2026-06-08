@@ -32,7 +32,7 @@ class SlotRepository:
 
         return result
 
-    def create(self, **new_slot: dict[str, Any]) -> SlotEntity:
+    def create(self, **new_slot: str | None) -> SlotEntity:
         """Создать временной слот."""
 
         slot = SlotEntity(**new_slot)

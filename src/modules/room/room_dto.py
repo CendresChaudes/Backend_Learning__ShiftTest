@@ -11,7 +11,7 @@ class RoomCreateDTO(BaseModel):
 
 
 class RoomUpdateDTO(BaseModel):
-    """Схема для обновления комнаты."""
+    """Схема для редактирования комнаты."""
 
     title: str | None
     description: str | None

@@ -11,10 +11,7 @@ from .auth_dto import TokenDTO, UserLoginDTO, UserRegisterDTO
 from .auth_service import AuthService
 from .user_dto import UserDTO
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["Авторизация"],
-)
+router = APIRouter(prefix="/auth", tags=["Авторизация"])
 
 
 @router.post(
@@ -39,10 +36,10 @@ async def register(
 
     try:
         return await auth_service.register(payload=payload)
-    except AlreadyExistsError as exception:
+    except AlreadyExistsError as error:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail=str(exception)
-        ) from exception
+            status_code=status.HTTP_409_CONFLICT, detail=str(error)
+        ) from error
 
 
 @router.post(
@@ -67,10 +64,10 @@ async def login(
         token = await auth_service.login(payload=payload)
 
         return TokenDTO(token=token, type="bearer")
-    except AlreadyExistsError as exception:
+    except AlreadyExistsError as error:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail=str(exception)
-        ) from exception
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)
+        ) from error
 
 
 __all__ = ["router"]

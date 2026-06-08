@@ -11,7 +11,7 @@ class SlotCreateDTO(BaseModel):
 
 
 class SlotUpdateDTO(BaseModel):
-    """Схема для обновления временного слота."""
+    """Схема для редактирования временного слота."""
 
     time: str | None
     room_id: int | None
