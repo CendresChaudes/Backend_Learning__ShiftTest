@@ -45,10 +45,12 @@ class RoomRepository:
     ) -> RoomEntity:
         """Редактировать комнату."""
 
-        for key, value in updated_room.items():
-            setattr(old_room, key, value)
+        room = old_room
 
-        return old_room
+        for key, value in updated_room.items():
+            setattr(room, key, value)
+
+        return room
 
     async def delete(self, room: RoomEntity) -> None:
         """Удалить комнату."""

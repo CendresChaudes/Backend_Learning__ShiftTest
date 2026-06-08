@@ -17,7 +17,7 @@ class RoomUpdateDTO(BaseModel):
     description: str | None
 
     @model_validator(mode="before")
-    def forbid_explicit_title_null(
+    def forbid_explicit_null(
         self, values: dict[str, str | None]
     ) -> dict[str, str | None]:
         """Запрещает передавать явный null в поле заголовка"""

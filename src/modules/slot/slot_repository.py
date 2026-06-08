@@ -1,5 +1,7 @@
 """Репозиторий для работы с временными слотами комнаты."""
 
+from typing import Any
+
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,24 +32,23 @@ class SlotRepository:
 
         return result
 
-    def create(self, time: str, room_id: int) -> SlotEntity:
+    def create(self, **new_slot: dict[str, Any]) -> SlotEntity:
         """Создать временной слот."""
 
-        slot = SlotEntity(time=time, room_id=room_id)
+        slot = SlotEntity(**new_slot)
         self.db.add(instance=slot)
 
         return slot
 
     def update(
-        self, slot: SlotEntity, time: str | None, room_id: int | None
+        self, old_slot: SlotEntity, **updated_slot: dict[str, Any]
     ) -> SlotEntity:
         """Редактировать временной слот."""
 
-        if time is not None:
-            slot.time = time
+        slot = old_slot
 
-        if room_id is not None:
-            slot.room_id = room_id
+        for key, value in updated_slot.items():
+            setattr(slot, key, value)
 
         return slot
 

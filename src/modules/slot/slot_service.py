@@ -44,7 +44,7 @@ class SlotService:
         if room is None:
             raise NotFoundError("Комната не найдена")
 
-        slot = self.slot_repository.create(room_id=room_id, time=payload.time)
+        slot = self.slot_repository.create(**payload.model_dump())
         await self.db.commit()
 
         return SlotDTO.model_validate(slot, from_attributes=True)
@@ -63,10 +63,7 @@ class SlotService:
             if room is None:
                 raise NotFoundError("Комната не найдена")
 
-        slot = self.slot_repository.update(
-            slot=slot, time=payload.time, room_id=payload.room_id
-        )
-
+        slot = self.slot_repository.update(old_slot=slot, **payload.model_dump())
         await self.db.commit()
 
         return SlotDTO.model_validate(slot, from_attributes=True)
