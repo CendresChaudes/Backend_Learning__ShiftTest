@@ -25,6 +25,7 @@ ROOM_IS_NOT_EXIST = "Комнаты не существует"
 @router.get(
     path="/",
     summary="Получить все комнаты",
+    status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: {
             "description": "Комнаты успешно получены",
@@ -47,6 +48,7 @@ async def get_rooms(
 @router.post(
     path="/",
     summary="Создать комнату",
+    status_code=status.HTTP_201_CREATED,
     responses={
         status.HTTP_201_CREATED: {
             "description": "Комната успешно создана",
@@ -66,6 +68,7 @@ async def create_room(
 @router.patch(
     path="/{room_id}",
     summary="Редактировать комнату",
+    status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: {
             "description": "Комната успешно отредактирована",
@@ -92,6 +95,7 @@ async def update_room(
 @router.delete(
     path="/{room_id}",
     summary="Удалить комнату",
+    status_code=status.HTTP_204_NO_CONTENT,
     responses={
         status.HTTP_204_NO_CONTENT: {
             "description": "Комната успешно удалена",
@@ -116,6 +120,7 @@ async def delete_room(
 @router.get(
     path="/{room_id}/slots",
     summary="Получить все временные слоты комнаты",
+    status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: {
             "description": "Слоты успешно получены",
@@ -148,6 +153,7 @@ async def get_slots(
 @router.post(
     path="/{room_id}/slots",
     summary="Создать временной слот для комнаты",
+    status_code=status.HTTP_201_CREATED,
     responses={
         status.HTTP_201_CREATED: {
             "description": "Слот успешно создан",
@@ -177,6 +183,7 @@ async def create_slot(
 @router.patch(
     path="/{room_id}/slots/{slot_id}",
     summary="Редактировать временной слот для комнаты",
+    status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: {
             "description": "Слот успешно отредактирован",
@@ -207,6 +214,7 @@ async def update_slot(
 @router.delete(
     path="/{room_id}/slots/{slot_id}",
     summary="Удалить временной слот для комнаты",
+    status_code=status.HTTP_204_NO_CONTENT,
     responses={
         status.HTTP_204_NO_CONTENT: {
             "description": "Слот успешно удален",
