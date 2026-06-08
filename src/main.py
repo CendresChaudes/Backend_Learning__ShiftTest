@@ -6,6 +6,7 @@ from typing import AsyncGenerator
 from fastapi import APIRouter, FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
+from .core.auth.auth_router import router as auth_router
 from .core.database.database_router import router as database_router
 from .core.database.database_session import engine
 from .modules.room.room_router import router as room_router
@@ -34,6 +35,7 @@ app = FastAPI(
     },
 )
 api_router = APIRouter(prefix="/api/v1")
+api_router.include_router(router=auth_router)
 api_router.include_router(router=database_router)
 api_router.include_router(router=room_router)
 app.include_router(router=api_router)

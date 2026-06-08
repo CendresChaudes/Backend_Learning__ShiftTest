@@ -6,11 +6,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Глобальные настройки приложения, загружаемые из переменных окружения."""
 
-    DB_USER: str = ""
-    DB_PASS: str = ""
-    DB_HOST: str = ""
-    DB_NAME: str = ""
-    DB_PORT: str = ""
+    DB_USER: str
+    DB_PASS: str
+    DB_HOST: str
+    DB_NAME: str
+    DB_PORT: str
+
+    JWT_SECRET: str
+    JWT_EXPIRE_MINUTES: int
 
     @property
     def db_url(self) -> str:
@@ -21,6 +24,6 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
 
 
-settings = Settings()
+settings = Settings()  # type: ignore
 
 __all__ = ["settings"]

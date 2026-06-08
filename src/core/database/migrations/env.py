@@ -5,6 +5,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from src.core.auth.user_entity import UserEntity  # noqa
 from src.core.configs.settings import settings
 from src.core.database.base_entity import BaseEntity
 from src.modules.room.room_entity import RoomEntity  # noqa

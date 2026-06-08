@@ -5,4 +5,12 @@ class NotFoundError(Exception):
     """Запись не найдена."""
 
 
-__all__ = ["NotFoundError"]
+class AlreadyExistsError(Exception):
+    """Запись с такими данными уже существует."""
+
+
+class AuthenticationError(Exception):
+    """Ошибка аутентификации"""
+
+
+__all__ = ["NotFoundError", "AlreadyExistsError", "AuthenticationError"]
