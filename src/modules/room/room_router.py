@@ -7,14 +7,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from src.shared.errors import NotFoundError
 
 from .room_dependencies import (
+    ERole,
     SlotCreateDTO,
     SlotDTO,
     SlotService,
     SlotUpdateDTO,
     UserEntity,
-    get_current_user,
     get_room_service,
     get_slot_service,
+    require_roles,
 )
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
 from .room_service import RoomService
@@ -41,7 +42,7 @@ ROOM_IS_NOT_EXIST = "Комнаты не существует"
 )
 async def get_rooms(
     room_service: Annotated[RoomService, Depends(get_room_service)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> list[RoomDTO]:
     """Получить все комнаты."""
 
@@ -62,7 +63,7 @@ async def get_rooms(
 async def create_room(
     payload: RoomCreateDTO,
     room_service: Annotated[RoomService, Depends(get_room_service)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> RoomDTO:
     """Создать комнату."""
 
@@ -85,7 +86,7 @@ async def update_room(
     room_id: int,
     payload: RoomUpdateDTO,
     room_service: Annotated[RoomService, Depends(get_room_service)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> RoomDTO:
     """Редактировать комнату."""
 
@@ -112,7 +113,7 @@ async def update_room(
 async def delete_room(
     room_id: int,
     room_service: Annotated[RoomService, Depends(get_room_service)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> None:
     """Удалить комнату."""
 
@@ -144,7 +145,7 @@ async def get_slots(
     room_id: int,
     room_service: Annotated[RoomService, Depends(get_room_service)],
     slot_service: Annotated[SlotService, Depends(get_slot_service)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> list[SlotDTO]:
     """Получить все временные слоты комнаты."""
 
@@ -175,7 +176,7 @@ async def create_slot(
     payload: SlotCreateDTO,
     room_service: Annotated[RoomService, Depends(get_room_service)],
     slot_service: Annotated[SlotService, Depends(get_slot_service)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> SlotDTO:
     """Создать временной слот для комнаты."""
 
@@ -207,7 +208,7 @@ async def update_slot(
     payload: SlotUpdateDTO,
     room_service: Annotated[RoomService, Depends(get_room_service)],
     slot_service: Annotated[SlotService, Depends(get_slot_service)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> SlotDTO:
     """Редактировать временной слот для комнаты."""
 
@@ -238,7 +239,7 @@ async def delete_slot(
     slot_id: int,
     room_service: Annotated[RoomService, Depends(get_room_service)],
     slot_service: Annotated[SlotService, Depends(get_slot_service)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> None:
     """Удалить временной слот для комнаты."""
 

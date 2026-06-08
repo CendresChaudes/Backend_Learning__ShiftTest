@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.auth.auth_utils import get_current_user
+from src.core.auth.auth_utils import require_roles
+from src.core.auth.user_entity import ERole
 
 from .database_dependencies import UserEntity, get_db
 from .database_dto import PingDTO
@@ -28,7 +29,7 @@ router = APIRouter(tags=["Проверки работоспособности"])
 )
 async def ping(
     db: Annotated[AsyncSession, Depends(get_db)],
-    _user: Annotated[UserEntity, Depends(get_current_user)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> PingDTO:
     """Проверка доступности базы данных."""
 

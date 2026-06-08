@@ -1,7 +1,7 @@
 """Утилитарные функции для аутентификации и авторизации."""
 
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
+from typing import Annotated, Callable
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -66,4 +66,19 @@ async def get_current_user(
     return user
 
 
-__all__ = ["create_token", "get_current_user"]
+def require_roles(*allowed: str) -> Callable[[UserEntity], UserEntity]:
+    """Ограничение доступа по роли."""
+
+    def check(user: Annotated[UserEntity, Depends(get_current_user)]) -> UserEntity:
+        if user.role.value not in allowed:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Недостаточно прав",
+            )
+
+        return user
+
+    return check
+
+
+__all__ = ["create_token", "require_roles"]
