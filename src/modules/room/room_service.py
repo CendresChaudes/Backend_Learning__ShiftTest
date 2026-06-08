@@ -30,6 +30,13 @@ class RoomService:
 
         return [RoomDTO.model_validate(room, from_attributes=True) for room in rooms]
 
+    async def get_one(self, room_id: int) -> RoomDTO:
+        """Получить комнату."""
+
+        room = await self.repository.get_by_id(room_id=room_id)
+
+        return RoomDTO.model_validate(room, from_attributes=True)
+
     async def create(self, payload: RoomCreateDTO) -> RoomDTO:
         """Создать комнату."""
 

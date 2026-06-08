@@ -2,7 +2,9 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
+
+from src.shared.errors import NotFoundError
 
 from .room_dependencies import (
     SlotCreateDTO,
@@ -17,10 +19,22 @@ from .room_service import RoomService
 
 router = APIRouter(prefix="/rooms", tags=["Комнаты"])
 
+ROOM_IS_NOT_EXIST = "Комнаты не существует"
+
 
 @router.get(
     path="/",
     summary="Получить все комнаты",
+    responses={
+        status.HTTP_200_OK: {
+            "description": "Комнаты успешно получены",
+            "content": {
+                "application/json": {
+                    "schema": {"type": "array", "items": RoomDTO.model_json_schema()}
+                }
+            },
+        },
+    },
 )
 async def get_rooms(
     room_service: Annotated[RoomService, Depends(get_room_service)],
@@ -33,6 +47,12 @@ async def get_rooms(
 @router.post(
     path="/",
     summary="Создать комнату",
+    responses={
+        status.HTTP_201_CREATED: {
+            "description": "Комната успешно создана",
+            "content": {"application/json": {"schema": RoomDTO.model_json_schema()}},
+        },
+    },
 )
 async def create_room(
     payload: RoomCreateDTO,
@@ -46,6 +66,13 @@ async def create_room(
 @router.patch(
     path="/{room_id}",
     summary="Редактировать комнату",
+    responses={
+        status.HTTP_200_OK: {
+            "description": "Комната успешно отредактирована",
+            "content": {"application/json": {"schema": RoomDTO.model_json_schema()}},
+        },
+        status.HTTP_404_NOT_FOUND: {"description": ROOM_IS_NOT_EXIST},
+    },
 )
 async def update_room(
     room_id: int,
@@ -54,30 +81,66 @@ async def update_room(
 ) -> RoomDTO:
     """Редактировать комнату."""
 
-    return await room_service.update(room_id=room_id, payload=payload)
+    try:
+        return await room_service.update(room_id=room_id, payload=payload)
+    except NotFoundError as exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+        ) from exception
 
 
 @router.delete(
     path="/{room_id}",
     summary="Удалить комнату",
+    responses={
+        status.HTTP_204_NO_CONTENT: {
+            "description": "Комната успешно удалена",
+            "content": {"application/json": {"schema": None}},
+        },
+        status.HTTP_404_NOT_FOUND: {"description": ROOM_IS_NOT_EXIST},
+    },
 )
 async def delete_room(
     room_id: int, room_service: Annotated[RoomService, Depends(get_room_service)]
 ) -> None:
     """Удалить комнату."""
 
-    await room_service.delete(room_id=room_id)
+    try:
+        await room_service.delete(room_id=room_id)
+    except NotFoundError as exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+        ) from exception
 
 
 @router.get(
     path="/{room_id}/slots",
     summary="Получить все временные слоты комнаты",
+    responses={
+        status.HTTP_200_OK: {
+            "description": "Слоты успешно получены",
+            "content": {
+                "application/json": {
+                    "schema": {"type": "array", "items": SlotDTO.model_json_schema()}
+                }
+            },
+        },
+        status.HTTP_404_NOT_FOUND: {"description": ROOM_IS_NOT_EXIST},
+    },
 )
 async def get_slots(
     room_id: int,
+    room_service: Annotated[RoomService, Depends(get_room_service)],
     slot_service: Annotated[SlotService, Depends(get_slot_service)],
 ) -> list[SlotDTO]:
     """Получить все временные слоты комнаты."""
+
+    try:
+        await room_service.get_one(room_id=room_id)
+    except NotFoundError as exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+        ) from exception
 
     return await slot_service.get_all(room_id=room_id)
 
@@ -85,13 +148,28 @@ async def get_slots(
 @router.post(
     path="/{room_id}/slots",
     summary="Создать временной слот для комнаты",
+    responses={
+        status.HTTP_201_CREATED: {
+            "description": "Слот успешно создан",
+            "content": {"application/json": {"schema": SlotDTO.model_json_schema()}},
+        },
+        status.HTTP_404_NOT_FOUND: {"description": ROOM_IS_NOT_EXIST},
+    },
 )
 async def create_slot(
     room_id: int,
     payload: SlotCreateDTO,
+    room_service: Annotated[RoomService, Depends(get_room_service)],
     slot_service: Annotated[SlotService, Depends(get_slot_service)],
 ) -> SlotDTO:
     """Создать временной слот для комнаты."""
+
+    try:
+        await room_service.get_one(room_id=room_id)
+    except NotFoundError as exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+        ) from exception
 
     return await slot_service.create(room_id=room_id, payload=payload)
 
@@ -99,13 +177,29 @@ async def create_slot(
 @router.patch(
     path="/{room_id}/slots/{slot_id}",
     summary="Редактировать временной слот для комнаты",
+    responses={
+        status.HTTP_200_OK: {
+            "description": "Слот успешно отредактирован",
+            "content": {"application/json": {"schema": SlotDTO.model_json_schema()}},
+        },
+        status.HTTP_404_NOT_FOUND: {"description": ROOM_IS_NOT_EXIST},
+    },
 )
 async def update_slot(
+    room_id: int,
     slot_id: int,
     payload: SlotUpdateDTO,
+    room_service: Annotated[RoomService, Depends(get_room_service)],
     slot_service: Annotated[SlotService, Depends(get_slot_service)],
 ) -> SlotDTO:
     """Редактировать временной слот для комнаты."""
+
+    try:
+        await room_service.get_one(room_id=room_id)
+    except NotFoundError as exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+        ) from exception
 
     return await slot_service.update(slot_id=slot_id, payload=payload)
 
@@ -113,11 +207,28 @@ async def update_slot(
 @router.delete(
     path="/{room_id}/slots/{slot_id}",
     summary="Удалить временной слот для комнаты",
+    responses={
+        status.HTTP_204_NO_CONTENT: {
+            "description": "Слот успешно удален",
+            "content": {"application/json": {"schema": None}},
+        },
+        status.HTTP_404_NOT_FOUND: {"description": ROOM_IS_NOT_EXIST},
+    },
 )
 async def delete_slot(
-    slot_id: int, slot_service: Annotated[SlotService, Depends(get_slot_service)]
+    room_id: int,
+    slot_id: int,
+    room_service: Annotated[RoomService, Depends(get_room_service)],
+    slot_service: Annotated[SlotService, Depends(get_slot_service)],
 ) -> None:
     """Удалить временной слот для комнаты."""
+
+    try:
+        await room_service.get_one(room_id=room_id)
+    except NotFoundError as exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+        ) from exception
 
     await slot_service.delete(slot_id=slot_id)
 

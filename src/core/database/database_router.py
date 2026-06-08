@@ -31,7 +31,6 @@ async def ping(db: Annotated[AsyncSession, Depends(get_db)]) -> PingDTO:
 
         return PingDTO(status=HTTP_200_MESSAGE)
     except Exception as exception:
-        print(exception)
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=HTTP_503_MESSAGE
         ) from exception

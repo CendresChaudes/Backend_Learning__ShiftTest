@@ -2,7 +2,7 @@
 
 
 class NotFoundError(Exception):
-    """Ошибка, возникающая при отсутствии ресурса."""
+    """Запись не найдена."""
 
 
 __all__ = ["NotFoundError"]
