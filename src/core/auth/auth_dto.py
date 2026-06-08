@@ -26,8 +26,8 @@ class UserLoginDTO(BaseModel):
 class TokenDTO(BaseModel):
     """Схема JWT-токена."""
 
-    token: str
-    type: str
+    access_token: str
+    token_type: str
 
 
 __all__ = ["UserRegisterDTO", "UserLoginDTO", "TokenDTO"]

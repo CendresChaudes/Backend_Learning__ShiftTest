@@ -12,7 +12,7 @@ from src.core.configs.settings import settings
 from .user_entity import ERole, UserEntity
 from .user_repository import UserRepository, get_user_repository
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def create_token(user_id: int, mail: str, role: ERole) -> str:
@@ -21,9 +21,9 @@ def create_token(user_id: int, mail: str, role: ERole) -> str:
     expire = datetime.now(timezone.utc) + timedelta(settings.JWT_EXPIRE_MINUTES)
 
     payload = {
-        "sub": user_id,
+        "sub": str(user_id),
         "mail": mail,
-        "role": role,
+        "role": role.value,
         "exp": expire,
     }
 
@@ -45,16 +45,17 @@ async def get_current_user(
 
         user_id = payload.get("sub")
 
-        if not isinstance(user_id, int):
-            raise TypeError("'user_id' должен быть числом")
+        if not isinstance(user_id, str):
+            raise TypeError("sub (user_id) должен быть строкой")
 
     except (JWTError, KeyError, ValueError) as error:
+        print(error)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Невалидный токен",
         ) from error
 
-    user = await user_repository.get_by_id(user_id=user_id)
+    user = await user_repository.get_by_id(user_id=int(user_id))
 
     if user is None:
         raise HTTPException(

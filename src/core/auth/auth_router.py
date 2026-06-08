@@ -3,6 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 
 from src.shared.errors import AlreadyExistsError
 
@@ -55,15 +56,19 @@ async def register(
     },
 )
 async def login(
-    payload: UserLoginDTO,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> TokenDTO:
     """Авторизоваться."""
 
     try:
-        token = await auth_service.login(payload=payload)
+        user_login_dto = UserLoginDTO(
+            mail=form_data.username, password=form_data.password
+        )
 
-        return TokenDTO(token=token, type="bearer")
+        token = await auth_service.login(payload=user_login_dto)
+
+        return TokenDTO(access_token=token, token_type="bearer")
     except AlreadyExistsError as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)
