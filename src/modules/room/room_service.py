@@ -40,7 +40,7 @@ class RoomService:
     async def create(self, payload: RoomCreateDTO) -> RoomDTO:
         """Создать комнату."""
 
-        room = self.repository.create(title=payload.title)
+        room = self.repository.create(**payload.model_dump())
         await self.db.commit()
 
         return RoomDTO.model_validate(room, from_attributes=True)
@@ -53,7 +53,7 @@ class RoomService:
         if room is None:
             raise NotFoundError("Комната не найдена")
 
-        room = self.repository.update(room=room, title=payload.title)
+        room = self.repository.update(old_room=room, **payload.model_dump())
         await self.db.commit()
 
         return RoomDTO.model_validate(room, from_attributes=True)

@@ -1,5 +1,7 @@
 """Репозиторий для работы с комнатами."""
 
+from typing import Any
+
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,20 +32,23 @@ class RoomRepository:
 
         return result
 
-    def create(self, title: str) -> RoomEntity:
+    def create(self, **new_room: dict[str, Any]) -> RoomEntity:
         """Создать комнату."""
 
-        room = RoomEntity(title=title)
+        room = RoomEntity(**new_room)
         self.db.add(instance=room)
 
         return room
 
-    def update(self, room: RoomEntity, title: str) -> RoomEntity:
+    def update(
+        self, old_room: RoomEntity, **updated_room: dict[str, Any]
+    ) -> RoomEntity:
         """Редактировать комнату."""
 
-        room.title = title
+        for key, value in updated_room.items():
+            setattr(old_room, key, value)
 
-        return room
+        return old_room
 
     async def delete(self, room: RoomEntity) -> None:
         """Удалить комнату."""
