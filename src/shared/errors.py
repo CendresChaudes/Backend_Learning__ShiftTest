@@ -6,7 +6,11 @@ class AlreadyExistsError(Exception):
 
 
 class AuthenticationError(Exception):
-    """Ошибка аутентификации"""
+    """Ошибка аутентификации."""
+
+
+class InvalidDataError(Exception):
+    "Невалидные данные."
 
 
 class NotFoundError(Exception):
@@ -20,6 +24,7 @@ class ForbiddenError(Exception):
 __all__ = [
     "AlreadyExistsError",
     "AuthenticationError",
+    "InvalidDataError",
     "ForbiddenError",
     "NotFoundError",
 ]

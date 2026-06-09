@@ -1,17 +1,17 @@
-"""Схемы для работы с временными слотами комнаты."""
+"""Схемы для работы со слотами."""
 
 from pydantic import BaseModel, model_validator
 
 
 class SlotCreateDTO(BaseModel):
-    """Схема для создания временного слота."""
+    """Схема для создания слота."""
 
     time: str
     room_id: int
 
 
 class SlotUpdateDTO(BaseModel):
-    """Схема для редактирования временного слота."""
+    """Схема для редактирования слота."""
 
     time: str | None
     room_id: int | None
@@ -31,10 +31,20 @@ class SlotUpdateDTO(BaseModel):
         return values
 
 
-class SlotDTO(SlotCreateDTO):
-    """Схема временного слота."""
+class RoomInner(BaseModel):
+    """Схема вложенной комнаты."""
 
     id: int
+    title: str
+    description: str | None
+
+
+class SlotDTO(BaseModel):
+    """Схема слота."""
+
+    id: int
+    time: str
+    room: RoomInner
 
 
 __all__ = ["SlotCreateDTO", "SlotUpdateDTO", "SlotDTO"]

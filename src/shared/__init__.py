@@ -4,12 +4,14 @@ from .errors import (
     AlreadyExistsError,
     AuthenticationError,
     ForbiddenError,
+    InvalidDataError,
     NotFoundError,
 )
 
 __all__ = [
     "AlreadyExistsError",
     "AuthenticationError",
+    "InvalidDataError",
     "ForbiddenError",
     "NotFoundError",
 ]

@@ -28,10 +28,18 @@ class RoomUpdateDTO(BaseModel):
         return values
 
 
+class SlotInner(BaseModel):
+    """Схема вложенного слота."""
+
+    id: int
+    time: str
+
+
 class RoomDTO(RoomCreateDTO):
     """Схема комнаты."""
 
     id: int
+    slots: list[SlotInner]
 
 
 __all__ = ["RoomCreateDTO", "RoomUpdateDTO", "RoomDTO"]

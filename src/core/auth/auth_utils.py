@@ -1,4 +1,4 @@
-"""Утилитарные функции для аутентификации и авторизации."""
+"""Утилитарные компоненты для аутентификации и авторизации."""
 
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Callable

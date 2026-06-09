@@ -32,6 +32,15 @@ class BookingRepository:
 
         return result
 
+    async def get_all_by_date(self, date: str) -> list[BookingEntity]:
+        """Получить бронирования по date."""
+
+        query = select(BookingEntity).where(BookingEntity.date == date)
+        response = await self.db.execute(statement=query)
+        result = list(response.scalars().all())
+
+        return result
+
     async def get_by_slot_id_and_date(
         self, slot_id: int, date: str
     ) -> BookingEntity | None:

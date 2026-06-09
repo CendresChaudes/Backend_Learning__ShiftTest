@@ -4,6 +4,7 @@ from typing import Any
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from .room_entity import RoomEntity
 
@@ -17,7 +18,7 @@ class RoomRepository:
     async def get_all(self) -> list[RoomEntity]:
         """Получить все комнаты."""
 
-        query = select(RoomEntity)
+        query = select(RoomEntity).options(selectinload(RoomEntity.slots))
         response = await self.db.execute(statement=query)
         result = list(response.scalars().all())
 

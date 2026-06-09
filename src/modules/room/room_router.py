@@ -1,22 +1,20 @@
 """Роутер для комнат."""
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.core.auth.auth_utils import require_roles
-from src.modules.slot import (
-    SlotCreateDTO,
-    SlotDTO,
-    SlotService,
-    SlotUpdateDTO,
-    get_slot_service,
-)
+from src.modules.slot.slot_dto import SlotCreateDTO, SlotDTO, SlotUpdateDTO
+from src.modules.slot.slot_service import get_slot_service
 from src.modules.user import ERole, UserEntity
 from src.shared import NotFoundError
 
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
 from .room_service import RoomService, get_room_service
+
+if TYPE_CHECKING:
+    from src.modules.slot.slot_service import SlotService
 
 router = APIRouter(prefix="/rooms", tags=["Комнаты"])
 
@@ -142,7 +140,7 @@ async def delete_room(
 async def get_slots(
     room_id: int,
     room_service: Annotated[RoomService, Depends(get_room_service)],
-    slot_service: Annotated[SlotService, Depends(get_slot_service)],
+    slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> list[SlotDTO]:
     """Получить все временные слоты комнаты."""
@@ -154,7 +152,7 @@ async def get_slots(
             status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
         ) from error
 
-    return await slot_service.get_all(room_id=room_id)
+    return await slot_service.get_all_by_room_id(room_id=room_id)
 
 
 @router.post(
@@ -173,7 +171,7 @@ async def create_slot(
     room_id: int,
     payload: SlotCreateDTO,
     room_service: Annotated[RoomService, Depends(get_room_service)],
-    slot_service: Annotated[SlotService, Depends(get_slot_service)],
+    slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> SlotDTO:
     """Создать временной слот для комнаты."""
@@ -205,7 +203,7 @@ async def update_slot(
     slot_id: int,
     payload: SlotUpdateDTO,
     room_service: Annotated[RoomService, Depends(get_room_service)],
-    slot_service: Annotated[SlotService, Depends(get_slot_service)],
+    slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> SlotDTO:
     """Редактировать временной слот для комнаты."""
@@ -236,7 +234,7 @@ async def delete_slot(
     room_id: int,
     slot_id: int,
     room_service: Annotated[RoomService, Depends(get_room_service)],
-    slot_service: Annotated[SlotService, Depends(get_slot_service)],
+    slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> None:
     """Удалить временной слот для комнаты."""
