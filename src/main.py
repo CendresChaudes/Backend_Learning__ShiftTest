@@ -37,6 +37,7 @@ app = FastAPI(
         "email": "romqaaa1337@gmail.com",
     },
 )
+
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(router=auth_router)
 api_router.include_router(router=database_router)

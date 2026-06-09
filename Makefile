@@ -18,13 +18,13 @@ lint: ## Запустить линтеры и проверки кода (pre-com
 	$(RUN_POETRY) pre-commit run --all-files --verbose
 
 # --- Миграции базы данных (Alembic) ---
-migration-generate: ## Создать новую миграцию. Требует переменной NAME: make migration-generate NAME="описание"
+migration-generate: ## Создать новую миграцию. Требует переменной NAME: make migration-generate NAME="<описание миграции на английском языке, например 'create_example_table'>"
 	PYTHONPATH=./src $(RUN_ALEMBIC) revision --autogenerate -m "$(NAME)"
 
 migration-upgrade: ## Применить все миграции до последней (upgrade head)
 	$(RUN_ALEMBIC) upgrade head
 
-migration-downgrade: ## Откатить миграции до указанной ревизии. Требует переменной NAME: make migration-downgrade NAME=base
+migration-downgrade: ## Откатить миграции до указанной ревизии. Требует переменной NAME: make migration-downgrade NAME="<идентификатор миграции>"
 	$(RUN_ALEMBIC) downgrade "$(NAME)"
 
 # --- Docker ---
