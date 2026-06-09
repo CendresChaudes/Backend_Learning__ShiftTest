@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 
 from .core.auth import auth_router
 from .core.database import database_router, engine
+from .modules.booking import booking_router
 from .modules.room import room_router
 
 
@@ -36,6 +37,7 @@ app = FastAPI(
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(router=auth_router)
 api_router.include_router(router=database_router)
+api_router.include_router(router=booking_router)
 api_router.include_router(router=room_router)
 app.include_router(router=api_router)
 

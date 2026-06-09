@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.modules.user import UserDTO
-from src.shared import AlreadyExistsError
+from src.shared import AlreadyExistsError, AuthenticationError
 
 from .auth_dto import TokenDTO, UserLoginDTO, UserRegisterDTO
 from .auth_service import AuthService, get_auth_service
@@ -68,7 +68,7 @@ async def login(
         token = await auth_service.login(payload=user_login_dto)
 
         return TokenDTO(access_token=token, token_type="bearer")
-    except AlreadyExistsError as error:
+    except AuthenticationError as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)
         ) from error
