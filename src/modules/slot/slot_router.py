@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import ValidationError
 
 from src.core.auth.auth_utils import require_roles
-from src.modules.user import ERole, UserEntity
+from src.modules.user.user_entity import ERole, UserEntity
 
 from .slot_dto import SlotDTO
 from .slot_service import SlotService, get_slot_service

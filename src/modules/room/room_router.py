@@ -7,8 +7,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from src.core.auth.auth_utils import require_roles
 from src.modules.slot.slot_dto import SlotCreateDTO, SlotDTO, SlotUpdateDTO
 from src.modules.slot.slot_service import get_slot_service
-from src.modules.user import ERole, UserEntity
-from src.shared import NotFoundError
+from src.modules.user.user_entity import ERole, UserEntity
+from src.shared.errors import NotFoundError
 
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
 from .room_service import RoomService, get_room_service

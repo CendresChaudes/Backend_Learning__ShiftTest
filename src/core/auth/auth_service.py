@@ -7,8 +7,9 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.database_session import get_db
-from src.modules.user import UserDTO, UserRepository
-from src.shared import AlreadyExistsError, AuthenticationError
+from src.modules.user.user_dto import UserDTO
+from src.modules.user.user_repository import UserRepository
+from src.shared.errors import AlreadyExistsError, AuthenticationError
 
 from .auth_dto import UserLoginDTO, UserRegisterDTO
 from .auth_utils import create_token

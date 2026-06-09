@@ -6,7 +6,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.database_session import get_db
-from src.shared import NotFoundError
+from src.shared.errors import NotFoundError
 
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
 from .room_repository import RoomRepository

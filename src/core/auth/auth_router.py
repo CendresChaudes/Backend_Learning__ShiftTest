@@ -5,8 +5,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.modules.user import UserDTO
-from src.shared import AlreadyExistsError, AuthenticationError
+from src.modules.user.user_dto import UserDTO
+from src.shared.errors import AlreadyExistsError, AuthenticationError
 
 from .auth_dto import TokenDTO, UserLoginDTO, UserRegisterDTO
 from .auth_service import AuthService, get_auth_service

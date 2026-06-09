@@ -6,9 +6,9 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.database_session import get_db
-from src.modules.booking import BookingRepository
+from src.modules.booking.booking_repository import BookingRepository
 from src.modules.room.room_repository import RoomRepository
-from src.shared import NotFoundError
+from src.shared.errors import NotFoundError
 
 from .slot_dto import SlotCreateDTO, SlotDTO, SlotUpdateDTO
 from .slot_repository import SlotRepository

@@ -6,8 +6,8 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.database_session import get_db
-from src.modules.user import ERole
-from src.shared import AlreadyExistsError, ForbiddenError, NotFoundError
+from src.modules.user.user_entity import ERole
+from src.shared.errors import AlreadyExistsError, ForbiddenError, NotFoundError
 
 from .booking_dto import BookingCreateDTO, BookingDTO
 from .booking_repository import BookingRepository

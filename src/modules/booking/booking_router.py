@@ -5,8 +5,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.core.auth.auth_utils import require_roles
-from src.modules.user import ERole, UserEntity
-from src.shared import AlreadyExistsError, ForbiddenError, NotFoundError
+from src.modules.user.user_entity import ERole, UserEntity
+from src.shared.errors import AlreadyExistsError, ForbiddenError, NotFoundError
 
 from .booking_dto import BookingCreateDTO, BookingDTO
 from .booking_service import BookingService, get_booking_service

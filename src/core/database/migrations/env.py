@@ -7,10 +7,10 @@ from sqlalchemy import engine_from_config, pool
 
 from src.core.configs.settings import settings
 from src.core.database.base_entity import BaseEntity
-from src.modules.booking import BookingEntity  # noqa
+from src.modules.booking.booking_entity import BookingEntity  # noqa
 from src.modules.room.room_entity import RoomEntity  # noqa
 from src.modules.slot.slot_entity import SlotEntity  # noqa
-from src.modules.user import UserEntity  # noqa
+from src.modules.user.user_entity import UserEntity  # noqa
 
 config = context.config
 

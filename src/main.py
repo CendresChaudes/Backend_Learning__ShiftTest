@@ -8,9 +8,10 @@ from fastapi.responses import JSONResponse
 
 from src.modules.slot.slot_router import router as slot_router
 
-from .core.auth import auth_router
-from .core.database import database_router, engine
-from .modules.booking import booking_router
+from .core.auth.auth_router import router as auth_router
+from .core.database.database_router import router as database_router
+from .core.database.database_session import engine
+from .modules.booking.booking_router import router as booking_router
 from .modules.room.room_router import router as room_router
 
 
