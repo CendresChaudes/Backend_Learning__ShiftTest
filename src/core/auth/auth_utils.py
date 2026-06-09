@@ -8,9 +8,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
 from src.core.configs.settings import settings
-
-from .user_entity import ERole, UserEntity
-from .user_repository import UserRepository, get_user_repository
+from src.modules.user import ERole, UserEntity, UserRepository, get_user_repository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 

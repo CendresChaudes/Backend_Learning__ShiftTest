@@ -6,7 +6,7 @@ from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.database.database_dependencies import get_db
+from src.core.database.database_session import get_db
 
 from .user_entity import ERole, UserEntity
 

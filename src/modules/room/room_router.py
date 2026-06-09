@@ -4,21 +4,19 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from src.shared.errors import NotFoundError
-
-from .room_dependencies import (
-    ERole,
+from src.core.auth.auth_utils import require_roles
+from src.modules.slot import (
     SlotCreateDTO,
     SlotDTO,
     SlotService,
     SlotUpdateDTO,
-    UserEntity,
-    get_room_service,
     get_slot_service,
-    require_roles,
 )
+from src.modules.user import ERole, UserEntity
+from src.shared import NotFoundError
+
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
-from .room_service import RoomService
+from .room_service import RoomService, get_room_service
 
 router = APIRouter(prefix="/rooms", tags=["Комнаты"])
 

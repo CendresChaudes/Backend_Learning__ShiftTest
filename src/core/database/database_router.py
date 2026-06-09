@@ -6,11 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.auth.auth_utils import require_roles
-from src.core.auth.user_entity import ERole
-
-from .database_dependencies import UserEntity, get_db
 from .database_dto import PingDTO
+from .database_session import get_db
 
 HTTP_200_MESSAGE = "БД доступна :)"
 HTTP_503_MESSAGE = "БД недоступна :("
@@ -27,10 +24,7 @@ router = APIRouter(tags=["Проверки работоспособности"])
         status.HTTP_503_SERVICE_UNAVAILABLE: {"description": HTTP_503_MESSAGE},
     },
 )
-async def ping(
-    db: Annotated[AsyncSession, Depends(get_db)],
-    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
-) -> PingDTO:
+async def ping(db: Annotated[AsyncSession, Depends(get_db)]) -> PingDTO:
     """Проверка доступности базы данных."""
 
     try:

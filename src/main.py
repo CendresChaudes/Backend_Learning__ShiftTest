@@ -6,10 +6,9 @@ from typing import AsyncGenerator
 from fastapi import APIRouter, FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from .core.auth.auth_router import router as auth_router
-from .core.database.database_router import router as database_router
-from .core.database.database_session import engine
-from .modules.room.room_router import router as room_router
+from .core.auth import auth_router
+from .core.database import database_router, engine
+from .modules.room import room_router
 
 
 @asynccontextmanager

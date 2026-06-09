@@ -5,13 +5,12 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .slot_dependencies import RoomRepository, get_db
+from src.core.database.database_session import get_db
+from src.modules.room import RoomRepository
+from src.shared import NotFoundError
+
 from .slot_dto import SlotCreateDTO, SlotDTO, SlotUpdateDTO
 from .slot_repository import SlotRepository
-
-
-class NotFoundError(Exception):
-    """Ошибка, возникающая при отсутствии ресурса."""
 
 
 class SlotService:
@@ -78,6 +77,12 @@ class SlotService:
 
         await self.slot_repository.delete(slot=slot)
         await self.db.commit()
+
+
+def get_slot_service(db: Annotated[AsyncSession, Depends(get_db)]) -> SlotService:
+    """Для инъекции зависимости SlotService."""
+
+    return SlotService(db)
 
 
 __all__ = ["SlotService"]

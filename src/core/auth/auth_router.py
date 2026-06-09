@@ -5,12 +5,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.shared.errors import AlreadyExistsError
+from src.modules.user import UserDTO
+from src.shared import AlreadyExistsError
 
-from .auth_dependencies import get_auth_service
 from .auth_dto import TokenDTO, UserLoginDTO, UserRegisterDTO
-from .auth_service import AuthService
-from .user_dto import UserDTO
+from .auth_service import AuthService, get_auth_service
 
 router = APIRouter(prefix="/auth", tags=["Авторизация"])
 

@@ -5,13 +5,11 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .room_dependencies import get_db
+from src.core.database.database_session import get_db
+from src.shared import NotFoundError
+
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
 from .room_repository import RoomRepository
-
-
-class NotFoundError(Exception):
-    """Ошибка, возникающая при отсутствии ресурса."""
 
 
 class RoomService:
@@ -70,4 +68,10 @@ class RoomService:
         await self.db.commit()
 
 
-__all__ = ["RoomService"]
+def get_room_service(db: Annotated[AsyncSession, Depends(get_db)]) -> RoomService:
+    """Для инъекции зависимости RoomService."""
+
+    return RoomService(db)
+
+
+__all__ = ["RoomService", "get_room_service"]

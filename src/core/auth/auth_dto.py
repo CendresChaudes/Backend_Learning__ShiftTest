@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, EmailStr
 
-from src.core.auth.user_entity import ERole
+from src.modules.user import ERole
 
 
 class UserRegisterDTO(BaseModel):

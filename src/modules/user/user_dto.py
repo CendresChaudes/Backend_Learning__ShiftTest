@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, EmailStr
 
-from src.core.auth.user_entity import ERole
+from .user_entity import ERole
 
 # class UserUpdateDTO(BaseModel):
 #     """Схема редактирования пользователя."""

@@ -6,17 +6,12 @@ import bcrypt
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.shared.errors import AlreadyExistsError, AuthenticationError
+from src.core.database.database_session import get_db
+from src.modules.user import UserDTO, UserRepository
+from src.shared import AlreadyExistsError, AuthenticationError
 
-from .auth_dependencies import get_db
 from .auth_dto import UserLoginDTO, UserRegisterDTO
 from .auth_utils import create_token
-from .user_dto import UserDTO
-from .user_repository import UserRepository
-
-
-class NotFoundError(Exception):
-    """Ошибка, возникающая при отсутствии ресурса."""
 
 
 class AuthService:
@@ -76,4 +71,10 @@ class AuthService:
         return create_token(user_id=user.id, mail=user.mail, role=user.role)
 
 
-__all__ = ["AuthService"]
+def get_auth_service(db: Annotated[AsyncSession, Depends(get_db)]) -> AuthService:
+    """Для инъекции зависимости AuthService."""
+
+    return AuthService(db)
+
+
+__all__ = ["AuthService", "get_auth_service"]
