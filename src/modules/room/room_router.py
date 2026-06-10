@@ -142,20 +142,17 @@ async def delete_room(
 )
 async def get_slots(
     room_id: int,
-    room_service: Annotated["RoomService", Depends(get_room_service)],
     slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated["UserEntity", Depends(require_roles(ERole.admin.value))],
 ) -> list[SlotDTO]:
     """Получить все временные слоты комнаты."""
 
     try:
-        await room_service.get_one(room_id=room_id)
+        return await slot_service.get_all_by_room_id(room_id=room_id)
     except NotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
-
-    return await slot_service.get_all_by_room_id(room_id=room_id)
 
 
 @router.post(
@@ -173,20 +170,17 @@ async def get_slots(
 async def create_slot(
     room_id: int,
     payload: SlotCreateDTO,
-    room_service: Annotated["RoomService", Depends(get_room_service)],
     slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated["UserEntity", Depends(require_roles(ERole.admin.value))],
 ) -> SlotDTO:
     """Создать временной слот для комнаты."""
 
     try:
-        await room_service.get_one(room_id=room_id)
+        return await slot_service.create(room_id=room_id, payload=payload)
     except NotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
-
-    return await slot_service.create(room_id=room_id, payload=payload)
 
 
 @router.patch(
@@ -205,20 +199,19 @@ async def update_slot(
     room_id: int,
     slot_id: int,
     payload: SlotUpdateDTO,
-    room_service: Annotated["RoomService", Depends(get_room_service)],
     slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated["UserEntity", Depends(require_roles(ERole.admin.value))],
 ) -> SlotDTO:
     """Редактировать временной слот для комнаты."""
 
     try:
-        await room_service.get_one(room_id=room_id)
+        return await slot_service.update(
+            room_id=room_id, slot_id=slot_id, payload=payload
+        )
     except NotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
-
-    return await slot_service.update(slot_id=slot_id, payload=payload)
 
 
 @router.delete(
@@ -236,20 +229,17 @@ async def update_slot(
 async def delete_slot(
     room_id: int,
     slot_id: int,
-    room_service: Annotated["RoomService", Depends(get_room_service)],
     slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated["UserEntity", Depends(require_roles(ERole.admin.value))],
 ) -> None:
     """Удалить временной слот для комнаты."""
 
     try:
-        await room_service.get_one(room_id=room_id)
+        await slot_service.delete(room_id=room_id, slot_id=slot_id)
     except NotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
-
-    await slot_service.delete(slot_id=slot_id)
 
 
 __all__ = ["router"]

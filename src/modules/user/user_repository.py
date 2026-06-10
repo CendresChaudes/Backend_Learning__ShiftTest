@@ -55,7 +55,7 @@ class UserRepository:
     # def update(
     #     self,
     #     old_user: UserEntity,
-    #     **updated_user: str, ERole | str | None
+    #     **updated_user: dict[str, Any]
     # ) -> UserEntity:
     #     """Редактировать пользователя."""
 

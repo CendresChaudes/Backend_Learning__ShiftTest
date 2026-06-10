@@ -3,14 +3,14 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from .database_dto import PingDTO
-from .database_session import get_db
-
-DATABASE_IS_AVAILABLE = "БД доступна :)"
-DATABASE_IS_UNAVAILABLE = "БД недоступна :("
+from .database_service import (
+    DATABASE_IS_AVAILABLE,
+    DATABASE_IS_UNAVAILABLE,
+    DatabaseService,
+    get_database_service,
+)
 
 router = APIRouter(tags=["Проверки работоспособности"])
 
@@ -24,17 +24,17 @@ router = APIRouter(tags=["Проверки работоспособности"])
         status.HTTP_503_SERVICE_UNAVAILABLE: {"description": DATABASE_IS_UNAVAILABLE},
     },
 )
-async def ping(db: Annotated[AsyncSession, Depends(get_db)]) -> PingDTO:
+async def ping(
+    database_service: Annotated[DatabaseService, Depends(get_database_service)],
+) -> PingDTO:
     """Проверка доступности базы данных."""
 
     try:
-        await db.execute(text("SELECT 1"))
-
-        return PingDTO(status=DATABASE_IS_AVAILABLE)
+        return await database_service.ping()
     except Exception as error:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=DATABASE_IS_UNAVAILABLE,
+            detail=str(error),
         ) from error
 
 

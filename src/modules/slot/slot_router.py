@@ -9,7 +9,6 @@ from src.modules.user.user_entity import ERole, UserEntity
 
 from .slot_dto import SlotDTO
 from .slot_service import get_slot_service
-from .slot_utils import DateModel
 
 if TYPE_CHECKING:
     from .slot_service import SlotService
@@ -40,8 +39,6 @@ async def get_slots(
     ],
 ) -> list[SlotDTO]:
     """Получить все свободные слоты."""
-
-    DateModel.model_validate({"date": date})
 
     return await slot_service.get_all_free_by_date(date=date)
 

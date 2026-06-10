@@ -6,10 +6,17 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.database_session import get_db
+from src.modules.room.room_entity import RoomEntity
 from src.shared.errors import NotFoundError
 
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
 from .room_repository import RoomRepository
+
+
+def get_room_is_not_exist_error_message(room_id: int) -> str:
+    """Функция для получения сообщения об ошибке нахождения."""
+
+    return f"Комната room_id={room_id} не найдена"
 
 
 class RoomService:
@@ -33,6 +40,9 @@ class RoomService:
 
         room = await self.repository.get_by_id(room_id=room_id)
 
+        if room is None:
+            raise NotFoundError(get_room_is_not_exist_error_message(room_id=room_id))
+
         return RoomDTO.model_validate(room, from_attributes=True)
 
     async def create(self, payload: RoomCreateDTO) -> RoomDTO:
@@ -46,25 +56,23 @@ class RoomService:
     async def update(self, room_id: int, payload: RoomUpdateDTO) -> RoomDTO:
         """Редактировать комнату."""
 
-        room = await self.repository.get_by_id(room_id=room_id)
+        old_room_dto = await self.get_one(room_id=room_id)
+        old_room_entity = RoomEntity(**old_room_dto.model_dump())
 
-        if room is None:
-            raise NotFoundError("Комната не найдена")
+        new_room = self.repository.update(
+            old_room=old_room_entity, **payload.model_dump()
+        )
 
-        room = self.repository.update(old_room=room, **payload.model_dump())
         await self.db.commit()
 
-        return RoomDTO.model_validate(room, from_attributes=True)
+        return RoomDTO.model_validate(new_room, from_attributes=True)
 
     async def delete(self, room_id: int) -> None:
         """Удалить комнату."""
 
-        room = await self.repository.get_by_id(room_id=room_id)
-
-        if room is None:
-            raise NotFoundError("Комната не найдена")
-
-        await self.repository.delete(room=room)
+        room_dto = await self.get_one(room_id=room_id)
+        room_entity = RoomEntity(**room_dto.model_dump())
+        await self.repository.delete(room=room_entity)
         await self.db.commit()
 
 
@@ -74,4 +82,4 @@ def get_room_service(db: Annotated[AsyncSession, Depends(get_db)]) -> RoomServic
     return RoomService(db)
 
 
-__all__ = ["RoomService", "get_room_service"]
+__all__ = ["RoomService", "get_room_service", "get_room_is_not_exist_error_message"]
