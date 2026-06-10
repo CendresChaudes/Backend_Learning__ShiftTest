@@ -1,9 +1,9 @@
 """Репозиторий для работы с пользователями."""
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import Depends
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.database_session import get_db
@@ -17,14 +17,14 @@ class UserRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    # async def get_all(self) -> list[UserEntity]:
-    #     """Получить всех пользователей."""
+    async def get_all(self) -> list[UserEntity]:
+        """Получить всех пользователей."""
 
-    #     query = select(UserEntity)
-    #     response = await self.db.execute(statement=query)
-    #     result = list(response.scalars().all())
+        query = select(UserEntity)
+        response = await self.db.execute(statement=query)
+        result = list(response.scalars().all())
 
-    #     return result
+        return result
 
     async def get_by_id(self, user_id: int) -> UserEntity | None:
         """Получить пользователя по id."""
@@ -52,25 +52,23 @@ class UserRepository:
 
         return user
 
-    # def update(
-    #     self,
-    #     old_user: UserEntity,
-    #     **updated_user: dict[str, Any]
-    # ) -> UserEntity:
-    #     """Редактировать пользователя."""
+    def update(
+        self, old_user: UserEntity, **updated_user: dict[str, Any]
+    ) -> UserEntity:
+        """Редактировать пользователя."""
 
-    #     room = old_user
+        room = old_user
 
-    #     for key, value in updated_user.items():
-    #         setattr(room, key, value)
+        for key, value in updated_user.items():
+            setattr(room, key, value)
 
-    #     return room
+        return room
 
-    # async def delete(self, user: UserEntity) -> None:
-    #     """Удалить пользователя."""
+    async def delete(self, user: UserEntity) -> None:
+        """Удалить пользователя."""
 
-    #     query = delete(UserEntity).where(UserEntity.id == user.id)
-    #     await self.db.execute(statement=query)
+        query = delete(UserEntity).where(UserEntity.id == user.id)
+        await self.db.execute(statement=query)
 
 
 def get_user_repository(db: Annotated[AsyncSession, Depends(get_db)]) -> UserRepository:

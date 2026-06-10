@@ -17,6 +17,7 @@ from .core.database.database_router import router as database_router
 from .core.database.database_session import engine
 from .modules.booking.booking_router import router as booking_router
 from .modules.room.room_router import router as room_router
+from .modules.user.user_router import router as user_router
 
 
 @asynccontextmanager
@@ -46,6 +47,7 @@ api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(router=auth_router)
 api_router.include_router(router=database_router)
 api_router.include_router(router=booking_router)
+api_router.include_router(router=user_router)
 api_router.include_router(router=slot_router)
 api_router.include_router(router=room_router)
 app.include_router(router=api_router)
