@@ -115,4 +115,4 @@ def get_slot_service(db: Annotated[AsyncSession, Depends(get_db)]) -> SlotServic
     return SlotService(db)
 
 
-__all__ = ["SlotService"]
+__all__ = ["SlotService", "get_slot_service"]

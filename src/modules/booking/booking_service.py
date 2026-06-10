@@ -57,7 +57,7 @@ class BookingService:
         if booking is None:
             raise NotFoundError("Бронирование не найдено")
 
-        if booking.user_id != user_id and user_role.value != ERole.admin.value:
+        if booking.user_id != user_id or user_role.value != ERole.admin.value:
             raise ForbiddenError("Доступ к бронированиям других пользователей запрещен")
 
         await self.repository.delete(booking=booking)

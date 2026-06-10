@@ -35,16 +35,6 @@ class RoomService:
 
         return [RoomDTO.model_validate(room, from_attributes=True) for room in rooms]
 
-    async def get_one(self, room_id: int) -> RoomDTO:
-        """Получить комнату."""
-
-        room = await self.repository.get_by_id(room_id=room_id)
-
-        if room is None:
-            raise NotFoundError(get_room_is_not_exist_error_message(room_id=room_id))
-
-        return RoomDTO.model_validate(room, from_attributes=True)
-
     async def create(self, payload: RoomCreateDTO) -> RoomDTO:
         """Создать комнату."""
 
@@ -56,7 +46,7 @@ class RoomService:
     async def update(self, room_id: int, payload: RoomUpdateDTO) -> RoomDTO:
         """Редактировать комнату."""
 
-        old_room_dto = await self.get_one(room_id=room_id)
+        old_room_dto = await self.__get_one(room_id=room_id)
         old_room_entity = RoomEntity(**old_room_dto.model_dump())
 
         new_room = self.repository.update(
@@ -70,10 +60,20 @@ class RoomService:
     async def delete(self, room_id: int) -> None:
         """Удалить комнату."""
 
-        room_dto = await self.get_one(room_id=room_id)
+        room_dto = await self.__get_one(room_id=room_id)
         room_entity = RoomEntity(**room_dto.model_dump())
         await self.repository.delete(room=room_entity)
         await self.db.commit()
+
+    async def __get_one(self, room_id: int) -> RoomDTO:
+        """Получить комнату."""
+
+        room = await self.repository.get_by_id(room_id=room_id)
+
+        if room is None:
+            raise NotFoundError(get_room_is_not_exist_error_message(room_id=room_id))
+
+        return RoomDTO.model_validate(room, from_attributes=True)
 
 
 def get_room_service(db: Annotated[AsyncSession, Depends(get_db)]) -> RoomService:

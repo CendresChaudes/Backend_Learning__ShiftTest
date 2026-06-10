@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 router = APIRouter(prefix="/rooms", tags=["Комнаты"])
 
-ROOM_IS_NOT_EXIST = "Комнаты не существует"
+ROOM_IS_NOT_EXIST = "Комната room_id={room_id} не найдена"
 
 
 @router.get(
