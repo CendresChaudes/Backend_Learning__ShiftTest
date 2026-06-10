@@ -82,7 +82,7 @@ async def get_me(
 )
 async def update_user(
     user_id: int,
-    payload: UserUpdateDTO,
+    payload: "UserUpdateDTO",
     user_service: Annotated["UserService", Depends(get_user_service)],
     user: Annotated[
         "UserEntity", Depends(require_roles(ERole.admin.value, ERole.basic.value))
