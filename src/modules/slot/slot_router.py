@@ -17,7 +17,7 @@ router = APIRouter(prefix="/slots", tags=["Слоты"])
 
 
 @router.get(
-    path="/",
+    path="/free",
     summary="Получить все свободные слоты",
     status_code=status.HTTP_200_OK,
     responses={
@@ -31,7 +31,7 @@ router = APIRouter(prefix="/slots", tags=["Слоты"])
         },
     },
 )
-async def get_slots(
+async def get_all_free_slots(
     date: Annotated[str, Query(description="Дата в формате DD.MM.YYYY")],
     slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated[
