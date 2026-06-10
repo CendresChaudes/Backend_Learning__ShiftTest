@@ -1,16 +1,28 @@
 """Сервис для работы с бронированиями."""
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database.database_session import get_db
+from src.modules.booking.booking_entity import BookingEntity
 from src.modules.user.user_entity import ERole
 from src.shared.errors import AlreadyExistsError, ForbiddenError, NotFoundError
 
-from .booking_dto import BookingCreateDTO, BookingDTO
+from .booking_dto import BookingDTO
 from .booking_repository import BookingRepository
+
+if TYPE_CHECKING:
+    from .booking_dto import BookingCreateDTO, BookingUpdateDTO
+
+FORBIDDEN_ACCESS_TO_BOOKING = "Доступ к бронированиям других пользователей запрещен"
+
+
+def get_booking_is_not_exist_error_message(booking_id: int) -> str:
+    """Функция для получения сообщения об ошибке нахождения."""
+
+    return f"Бронирование booking_id={booking_id} не найдено"
 
 
 class BookingService:
@@ -32,7 +44,7 @@ class BookingService:
             for booking in bookings
         ]
 
-    async def create(self, payload: BookingCreateDTO, user_id: int) -> BookingDTO:
+    async def create(self, payload: "BookingCreateDTO", user_id: int) -> BookingDTO:
         """Создать бронирование."""
 
         existing_booking = await self.repository.get_by_slot_id_and_date(
@@ -49,19 +61,58 @@ class BookingService:
 
         return BookingDTO.model_validate(booking, from_attributes=True)
 
+    async def update(
+        self,
+        booking_id: int,
+        payload: "BookingUpdateDTO",
+        user_id: int,
+        user_role: ERole,
+    ) -> BookingDTO:
+        """Редактировать бронирование."""
+
+        old_booking_entity = await self.__get_one(booking_id=booking_id)
+
+        self.__check_has_user_access(
+            booking=old_booking_entity, user_id=user_id, user_role=user_role
+        )
+
+        new_booking_entity = self.repository.update(
+            old_booking=old_booking_entity, **payload.model_dump()
+        )
+
+        await self.db.commit()
+
+        return BookingDTO.model_validate(new_booking_entity, from_attributes=True)
+
     async def delete(self, booking_id: int, user_id: int, user_role: ERole) -> None:
         """Удалить бронирование."""
 
-        booking = await self.repository.get_by_id(booking_id=booking_id)
+        booking = await self.__get_one(booking_id=booking_id)
 
-        if booking is None:
-            raise NotFoundError("Бронирование не найдено")
-
-        if booking.user_id != user_id or user_role.value != ERole.admin.value:
-            raise ForbiddenError("Доступ к бронированиям других пользователей запрещен")
+        self.__check_has_user_access(
+            booking=booking, user_id=user_id, user_role=user_role
+        )
 
         await self.repository.delete(booking=booking)
         await self.db.commit()
+
+    async def __get_one(self, booking_id: int) -> BookingEntity:
+        """Получить бронирование."""
+
+        room = await self.repository.get_by_id(booking_id=booking_id)
+
+        if room is None:
+            raise NotFoundError(
+                get_booking_is_not_exist_error_message(booking_id=booking_id)
+            )
+
+        return room
+
+    def __check_has_user_access(
+        self, booking: BookingEntity, user_id: int, user_role: ERole
+    ) -> None:
+        if booking.user_id != user_id or user_role.value != ERole.admin.value:
+            raise ForbiddenError(FORBIDDEN_ACCESS_TO_BOOKING)
 
 
 def get_booking_service(db: Annotated[AsyncSession, Depends(get_db)]) -> BookingService:
@@ -70,4 +121,4 @@ def get_booking_service(db: Annotated[AsyncSession, Depends(get_db)]) -> Booking
     return BookingService(db)
 
 
-__all__ = ["BookingService", "get_booking_service"]
+__all__ = ["BookingService", "get_booking_service", "FORBIDDEN_ACCESS_TO_BOOKING"]

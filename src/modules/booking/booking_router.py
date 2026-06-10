@@ -8,15 +8,18 @@ from src.core.auth.auth_utils import require_roles
 from src.modules.user.user_entity import ERole
 from src.shared.errors import AlreadyExistsError, ForbiddenError, NotFoundError
 
-from .booking_dto import BookingCreateDTO, BookingDTO
-from .booking_service import get_booking_service
+from .booking_dto import BookingDTO
+from .booking_service import FORBIDDEN_ACCESS_TO_BOOKING, get_booking_service
 
 if TYPE_CHECKING:
     from src.modules.user.user_entity import UserEntity
 
+    from .booking_dto import BookingCreateDTO, BookingUpdateDTO
     from .booking_service import BookingService
 
 router = APIRouter(prefix="/bookings", tags=["Бронирования"])
+
+BOOKING_IS_NOT_EXIST = "Бронирование booking_id={booking_id} не найдено"
 
 
 @router.get(
@@ -58,7 +61,7 @@ async def get_bookings(
     },
 )
 async def create_booking(
-    payload: BookingCreateDTO,
+    payload: "BookingCreateDTO",
     booking_service: Annotated["BookingService", Depends(get_booking_service)],
     user: Annotated[
         "UserEntity", Depends(require_roles(ERole.admin.value, ERole.basic.value))
@@ -74,6 +77,43 @@ async def create_booking(
         ) from error
 
 
+@router.patch(
+    path="/{booking_id}",
+    summary="Редактировать бронирование",
+    status_code=status.HTTP_200_OK,
+    responses={
+        status.HTTP_200_OK: {
+            "description": "Бронирование успешно отредактировано",
+            "content": {"application/json": {"schema": BookingDTO.model_json_schema()}},
+        },
+        status.HTTP_403_FORBIDDEN: {"description": FORBIDDEN_ACCESS_TO_BOOKING},
+        status.HTTP_404_NOT_FOUND: {"description": BOOKING_IS_NOT_EXIST},
+    },
+)
+async def update_booking(
+    booking_id: int,
+    payload: "BookingUpdateDTO",
+    booking_service: Annotated["BookingService", Depends(get_booking_service)],
+    user: Annotated[
+        "UserEntity", Depends(require_roles(ERole.admin.value, ERole.basic.value))
+    ],
+) -> BookingDTO:
+    """Редактировать бронирование."""
+
+    try:
+        return await booking_service.update(
+            booking_id=booking_id, payload=payload, user_id=user.id, user_role=user.role
+        )
+    except ForbiddenError as error:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=str(error)
+        ) from error
+    except NotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+
+
 @router.delete(
     path="/{booking_id}",
     summary="Удалить бронирование",
@@ -83,10 +123,8 @@ async def create_booking(
             "description": "Бронирование успешно удалено",
             "content": {"application/json": {"schema": None}},
         },
-        status.HTTP_403_FORBIDDEN: {
-            "description": "Доступ к бронированиям других пользователей запрещен"
-        },
-        status.HTTP_404_NOT_FOUND: {"description": "Бронирование не найдено"},
+        status.HTTP_403_FORBIDDEN: {"description": FORBIDDEN_ACCESS_TO_BOOKING},
+        status.HTTP_404_NOT_FOUND: {"description": BOOKING_IS_NOT_EXIST},
     },
 )
 async def delete_booking(

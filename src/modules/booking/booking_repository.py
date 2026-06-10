@@ -63,6 +63,18 @@ class BookingRepository:
 
         return booking
 
+    def update(
+        self, old_booking: BookingEntity, **updated_booking: dict[str, Any]
+    ) -> BookingEntity:
+        """Редактировать бронирование."""
+
+        booking = old_booking
+
+        for key, value in updated_booking.items():
+            setattr(booking, key, value)
+
+        return booking
+
     async def delete(self, booking: BookingEntity) -> None:
         """Удалить бронирование."""
 
