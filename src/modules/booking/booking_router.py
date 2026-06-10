@@ -1,15 +1,20 @@
 """Роутер для бронирований."""
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.core.auth.auth_utils import require_roles
-from src.modules.user.user_entity import ERole, UserEntity
+from src.modules.user.user_entity import ERole
 from src.shared.errors import AlreadyExistsError, ForbiddenError, NotFoundError
 
 from .booking_dto import BookingCreateDTO, BookingDTO
-from .booking_service import BookingService, get_booking_service
+from .booking_service import get_booking_service
+
+if TYPE_CHECKING:
+    from src.modules.user.user_entity import UserEntity
+
+    from .booking_service import BookingService
 
 router = APIRouter(prefix="/bookings", tags=["Бронирования"])
 
@@ -30,8 +35,8 @@ router = APIRouter(prefix="/bookings", tags=["Бронирования"])
     },
 )
 async def get_bookings(
-    booking_service: Annotated[BookingService, Depends(get_booking_service)],
-    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
+    booking_service: Annotated["BookingService", Depends(get_booking_service)],
+    _user: Annotated["UserEntity", Depends(require_roles(ERole.admin.value))],
 ) -> list[BookingDTO]:
     """Получить все бронирования."""
 
@@ -54,9 +59,9 @@ async def get_bookings(
 )
 async def create_booking(
     payload: BookingCreateDTO,
-    booking_service: Annotated[BookingService, Depends(get_booking_service)],
+    booking_service: Annotated["BookingService", Depends(get_booking_service)],
     user: Annotated[
-        UserEntity, Depends(require_roles(ERole.admin.value, ERole.basic.value))
+        "UserEntity", Depends(require_roles(ERole.admin.value, ERole.basic.value))
     ],
 ) -> BookingDTO:
     """Создать бронирование."""
@@ -86,9 +91,9 @@ async def create_booking(
 )
 async def delete_booking(
     booking_id: int,
-    booking_service: Annotated[BookingService, Depends(get_booking_service)],
+    booking_service: Annotated["BookingService", Depends(get_booking_service)],
     user: Annotated[
-        UserEntity, Depends(require_roles(ERole.admin.value, ERole.basic.value))
+        "UserEntity", Depends(require_roles(ERole.admin.value, ERole.basic.value))
     ],
 ) -> None:
     """Удалить бронирование."""

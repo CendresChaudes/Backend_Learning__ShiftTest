@@ -1,6 +1,6 @@
 """Роутер для слотов."""
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import ValidationError
@@ -9,8 +9,11 @@ from src.core.auth.auth_utils import require_roles
 from src.modules.user.user_entity import ERole, UserEntity
 
 from .slot_dto import SlotDTO
-from .slot_service import SlotService, get_slot_service
+from .slot_service import get_slot_service
 from .slot_utils import DateModel
+
+if TYPE_CHECKING:
+    from .slot_service import SlotService
 
 router = APIRouter(prefix="/slots", tags=["Слоты"])
 
@@ -32,7 +35,7 @@ router = APIRouter(prefix="/slots", tags=["Слоты"])
 )
 async def get_slots(
     date: Annotated[str, Query(description="Дата в формате DD.MM.YYYY")],
-    slot_service: Annotated[SlotService, Depends(get_slot_service)],
+    slot_service: Annotated["SlotService", Depends(get_slot_service)],
     _user: Annotated[
         UserEntity, Depends(require_roles(ERole.admin.value, ERole.basic.value))
     ],

@@ -1,15 +1,19 @@
 """Утилитарные компоненты для аутентификации и авторизации."""
 
 from datetime import datetime, timedelta, timezone
-from typing import Annotated, Callable
+from typing import TYPE_CHECKING, Annotated, Callable
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
 from src.core.configs.settings import settings
-from src.modules.user.user_entity import ERole, UserEntity
-from src.modules.user.user_repository import UserRepository, get_user_repository
+from src.modules.user.user_entity import ERole
+from src.modules.user.user_repository import get_user_repository
+
+if TYPE_CHECKING:
+    from src.modules.user.user_entity import UserEntity
+    from src.modules.user.user_repository import UserRepository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
@@ -31,8 +35,8 @@ def create_token(user_id: int, mail: str, role: ERole) -> str:
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
-) -> UserEntity:
+    user_repository: Annotated["UserRepository", Depends(get_user_repository)],
+) -> "UserEntity":
     """Получает пользователя по JWT-токену."""
 
     try:
@@ -65,10 +69,10 @@ async def get_current_user(
     return user
 
 
-def require_roles(*allowed: str) -> Callable[[UserEntity], UserEntity]:
+def require_roles(*allowed: str) -> Callable[["UserEntity"], "UserEntity"]:
     """Ограничение доступа по роли."""
 
-    def check(user: Annotated[UserEntity, Depends(get_current_user)]) -> UserEntity:
+    def check(user: Annotated["UserEntity", Depends(get_current_user)]) -> "UserEntity":
         if user.role.value not in allowed:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
