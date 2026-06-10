@@ -2,8 +2,7 @@
 
 from typing import TYPE_CHECKING, Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import ValidationError
+from fastapi import APIRouter, Depends, Query, status
 
 from src.core.auth.auth_utils import require_roles
 from src.modules.user.user_entity import ERole, UserEntity
@@ -42,12 +41,7 @@ async def get_slots(
 ) -> list[SlotDTO]:
     """Получить все свободные слоты."""
 
-    try:
-        DateModel.model_validate({"date": date})
-    except ValidationError as error:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=error.errors()[0]["msg"]
-        ) from error
+    DateModel.model_validate({"date": date})
 
     return await slot_service.get_all_free_by_date(date=date)
 

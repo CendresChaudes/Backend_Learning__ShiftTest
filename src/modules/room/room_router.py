@@ -93,7 +93,7 @@ async def update_room(
         return await room_service.update(room_id=room_id, payload=payload)
     except NotFoundError as error:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
 
 
@@ -120,7 +120,7 @@ async def delete_room(
         await room_service.delete(room_id=room_id)
     except NotFoundError as error:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
 
 
@@ -137,7 +137,7 @@ async def delete_room(
                 }
             },
         },
-        status.HTTP_404_NOT_FOUND: {"description": ROOM_IS_NOT_EXIST},
+        status.HTTP_404_NOT_FOUND: {"description": ""},
     },
 )
 async def get_slots(
@@ -152,7 +152,7 @@ async def get_slots(
         await room_service.get_one(room_id=room_id)
     except NotFoundError as error:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
 
     return await slot_service.get_all_by_room_id(room_id=room_id)
@@ -183,7 +183,7 @@ async def create_slot(
         await room_service.get_one(room_id=room_id)
     except NotFoundError as error:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
 
     return await slot_service.create(room_id=room_id, payload=payload)
@@ -215,7 +215,7 @@ async def update_slot(
         await room_service.get_one(room_id=room_id)
     except NotFoundError as error:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
 
     return await slot_service.update(slot_id=slot_id, payload=payload)
@@ -246,7 +246,7 @@ async def delete_slot(
         await room_service.get_one(room_id=room_id)
     except NotFoundError as error:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=ROOM_IS_NOT_EXIST
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
 
     await slot_service.delete(slot_id=slot_id)
