@@ -1,6 +1,6 @@
 """Сервис для работы с бронированиями."""
 
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,11 +11,8 @@ from src.modules.booking.booking_entity import BookingEntity
 from src.modules.user.user_entity import ERole
 from src.shared.errors import AlreadyExistsError, ForbiddenError, NotFoundError
 
-from .booking_dto import BookingDTO
+from .booking_dto import BookingCreateDTO, BookingDTO, BookingUpdateDTO
 from .booking_repository import BookingRepository
-
-if TYPE_CHECKING:
-    from .booking_dto import BookingCreateDTO, BookingUpdateDTO
 
 FORBIDDEN_ACCESS_TO_BOOKING = "Доступ к бронированиям других пользователей запрещен"
 
@@ -45,7 +42,7 @@ class BookingService:
             for booking in bookings
         ]
 
-    async def create(self, payload: "BookingCreateDTO", user_id: int) -> BookingDTO:
+    async def create(self, payload: BookingCreateDTO, user_id: int) -> BookingDTO:
         """Создать бронирование."""
 
         existing_booking = await self.repository.get_by_slot_id_and_date(
@@ -65,7 +62,7 @@ class BookingService:
     async def update(
         self,
         booking_id: int,
-        payload: "BookingUpdateDTO",
+        payload: BookingUpdateDTO,
         user_id: int,
         user_role: ERole,
     ) -> BookingDTO:

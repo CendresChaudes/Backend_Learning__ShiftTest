@@ -1,6 +1,6 @@
 """Роутер для регистрации и авторизации."""
 
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -9,10 +9,7 @@ from src.modules.user.user_dto import UserDTO
 from src.shared.errors import AlreadyExistsError, AuthenticationError
 
 from .auth_dto import TokenDTO, UserLoginDTO, UserRegisterDTO
-from .auth_service import get_auth_service
-
-if TYPE_CHECKING:
-    from .auth_service import AuthService
+from .auth_service import AuthService, get_auth_service
 
 router = APIRouter(prefix="/auth", tags=["Авторизация"])
 
@@ -33,7 +30,7 @@ router = APIRouter(prefix="/auth", tags=["Авторизация"])
 )
 async def register(
     payload: UserRegisterDTO,
-    auth_service: Annotated["AuthService", Depends(get_auth_service)],
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> UserDTO:
     """Зарегистрироваться."""
 
@@ -59,7 +56,7 @@ async def register(
 )
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    auth_service: Annotated["AuthService", Depends(get_auth_service)],
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> TokenDTO:
     """Авторизоваться."""
 

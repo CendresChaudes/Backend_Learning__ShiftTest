@@ -1,21 +1,19 @@
 """Роутер для бронирований."""
 
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.core.auth.auth_utils import require_roles
-from src.modules.user.user_entity import ERole
+from src.modules.user.user_entity import ERole, UserEntity
 from src.shared.errors import AlreadyExistsError, ForbiddenError, NotFoundError
 
-from .booking_dto import BookingDTO
-from .booking_service import FORBIDDEN_ACCESS_TO_BOOKING, get_booking_service
-
-if TYPE_CHECKING:
-    from src.modules.user.user_entity import UserEntity
-
-    from .booking_dto import BookingCreateDTO, BookingUpdateDTO
-    from .booking_service import BookingService
+from .booking_dto import BookingCreateDTO, BookingDTO, BookingUpdateDTO
+from .booking_service import (
+    FORBIDDEN_ACCESS_TO_BOOKING,
+    BookingService,
+    get_booking_service,
+)
 
 router = APIRouter(prefix="/bookings", tags=["Бронирования"])
 
@@ -38,8 +36,8 @@ BOOKING_IS_NOT_EXIST = "Бронирование booking_id={booking_id} не н
     },
 )
 async def get_bookings(
-    booking_service: Annotated["BookingService", Depends(get_booking_service)],
-    _user: Annotated["UserEntity", Depends(require_roles(ERole.admin.value))],
+    booking_service: Annotated[BookingService, Depends(get_booking_service)],
+    _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
 ) -> list[BookingDTO]:
     """Получить все бронирования."""
 
@@ -61,10 +59,10 @@ async def get_bookings(
     },
 )
 async def create_booking(
-    payload: "BookingCreateDTO",
-    booking_service: Annotated["BookingService", Depends(get_booking_service)],
+    payload: BookingCreateDTO,
+    booking_service: Annotated[BookingService, Depends(get_booking_service)],
     user: Annotated[
-        "UserEntity", Depends(require_roles(ERole.admin.value, ERole.basic.value))
+        UserEntity, Depends(require_roles(ERole.admin.value, ERole.basic.value))
     ],
 ) -> BookingDTO:
     """Создать бронирование."""
@@ -92,10 +90,10 @@ async def create_booking(
 )
 async def update_booking(
     booking_id: int,
-    payload: "BookingUpdateDTO",
-    booking_service: Annotated["BookingService", Depends(get_booking_service)],
+    payload: BookingUpdateDTO,
+    booking_service: Annotated[BookingService, Depends(get_booking_service)],
     user: Annotated[
-        "UserEntity", Depends(require_roles(ERole.admin.value, ERole.basic.value))
+        UserEntity, Depends(require_roles(ERole.admin.value, ERole.basic.value))
     ],
 ) -> BookingDTO:
     """Редактировать бронирование."""
@@ -129,9 +127,9 @@ async def update_booking(
 )
 async def delete_booking(
     booking_id: int,
-    booking_service: Annotated["BookingService", Depends(get_booking_service)],
+    booking_service: Annotated[BookingService, Depends(get_booking_service)],
     user: Annotated[
-        "UserEntity", Depends(require_roles(ERole.admin.value, ERole.basic.value))
+        UserEntity, Depends(require_roles(ERole.admin.value, ERole.basic.value))
     ],
 ) -> None:
     """Удалить бронирование."""
