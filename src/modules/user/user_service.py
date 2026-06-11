@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.configs.logging import logger
 from src.core.database.database_session import get_db
 from src.shared.errors import ForbiddenError, NotFoundError
 
@@ -41,7 +42,9 @@ class UserService:
         user = await self.repository.get_by_id(user_id=user_id)
 
         if user is None:
-            raise NotFoundError(get_user_is_not_exist_error_message(user_id=user_id))
+            error_message = get_user_is_not_exist_error_message(user_id=user_id)
+            logger.error(error_message)
+            raise NotFoundError(error_message)
 
         return UserDTO.model_validate(user, from_attributes=True)
 
@@ -51,9 +54,9 @@ class UserService:
         """Редактировать пользователя."""
 
         if user_id != me_id or me_role.value != ERole.admin.value:
-            raise ForbiddenError(
-                "Доступ к редактированию другого пользователя запрещен"
-            )
+            error_message = "Доступ к удалению другого пользователя запрещен"
+            logger.error(error_message)
+            raise ForbiddenError(error_message)
 
         old_user_dto = await self.get_one(user_id=user_id)
         old_user_entity = UserEntity(**old_user_dto.model_dump())
@@ -70,7 +73,9 @@ class UserService:
         """Удалить пользователя."""
 
         if user_id != me_id or me_role.value != ERole.admin.value:
-            raise ForbiddenError("Доступ к удалению другого пользователя запрещен")
+            error_message = "Доступ к удалению другого пользователя запрещен"
+            logger.error(error_message)
+            raise ForbiddenError(error_message)
 
         user_dto = await self.get_one(user_id=user_id)
         user_entity = UserEntity(**user_dto.model_dump())

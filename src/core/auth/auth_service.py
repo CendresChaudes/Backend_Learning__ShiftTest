@@ -1,11 +1,12 @@
 """Сервис для регистрации и авторизации."""
 
-from typing import Annotated
+from typing import Annotated, NoReturn
 
 import bcrypt
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.configs.logging import logger
 from src.core.database.database_session import get_db
 from src.modules.user.user_dto import UserDTO
 from src.modules.user.user_repository import UserRepository
@@ -30,9 +31,9 @@ class AuthService:
         existing_user = await self.user_repository.get_by_mail(mail=payload.mail)
 
         if existing_user is not None:
-            raise AlreadyExistsError(
-                f"Пользователь c mail='{payload.mail}' уже существует"
-            )
+            error_message = f"Пользователь c mail='{payload.mail}' уже существует"
+            logger.error(error_message)
+            raise AlreadyExistsError(error_message)
 
         password_hash = bcrypt.hashpw(
             payload.password.encode("utf-8"), bcrypt.gensalt()
@@ -55,21 +56,24 @@ class AuthService:
     async def login(self, payload: UserLoginDTO) -> str:
         """Авторизация пользователя."""
 
-        error = AuthenticationError("Неверный mail или пароль")
-
         user = await self.user_repository.get_by_mail(mail=payload.mail)
 
         if user is None:
-            raise error
+            self.__raise_login_error()
 
         is_password_valid = bcrypt.checkpw(
             payload.password.encode("utf-8"), user.password_hash.encode("utf-8")
         )
 
         if not is_password_valid:
-            raise error
+            self.__raise_login_error()
 
         return create_token(user_id=user.id, mail=user.mail, role=user.role)
+
+    def __raise_login_error(self) -> NoReturn:
+        error_message = "Неверный mail или пароль"
+        logger.error(error_message)
+        raise AuthenticationError(error_message)
 
 
 def get_auth_service(db: Annotated[AsyncSession, Depends(get_db)]) -> AuthService:

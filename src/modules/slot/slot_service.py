@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.configs.logging import logger
 from src.core.database.database_session import get_db
 from src.modules.booking.booking_repository import BookingRepository
 from src.modules.room.room_repository import RoomRepository
@@ -96,7 +97,9 @@ class SlotService:
         slot = await self.slot_repository.get_by_id(slot_id=slot_id)
 
         if slot is None:
-            raise NotFoundError(get_slot_is_not_exist_error_message(slot_id=slot_id))
+            error_message = get_slot_is_not_exist_error_message(slot_id=slot_id)
+            logger.error(error_message)
+            raise NotFoundError(error_message)
 
         return slot
 
@@ -106,7 +109,9 @@ class SlotService:
         room = await self.room_repository.get_by_id(room_id=room_id)
 
         if room is None:
-            raise NotFoundError(get_room_is_not_exist_error_message(room_id=room_id))
+            error_message = get_room_is_not_exist_error_message(room_id=room_id)
+            logger.error(error_message)
+            raise NotFoundError(error_message)
 
 
 def get_slot_service(db: Annotated[AsyncSession, Depends(get_db)]) -> SlotService:

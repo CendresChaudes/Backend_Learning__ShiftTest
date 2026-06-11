@@ -4,11 +4,11 @@ from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
 
 from fastapi import APIRouter, FastAPI, Request, status
-from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
+from src.core.configs.logging import logger
 from src.modules.slot.slot_router import router as slot_router
 from src.shared.errors import create_message_from_validation_error
 
@@ -24,11 +24,11 @@ from .modules.user.user_router import router as user_router
 async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     """Логика при запуске и остановке приложения."""
 
-    print("Приложение запущено!")
+    logger.info("Приложение запущено")
 
     yield
 
-    print("Приложение остановлено!")
+    logger.info("Приложение остановлено")
     await engine.dispose()
 
 
@@ -117,24 +117,12 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
             content={"detail": create_message_from_validation_error(exc)},
         )
 
-    print(f"Необработанная ошибка при запросе {request.method} {request.url}: {exc}")
+    logger.error(
+        f"Необработанная ошибка при запросе method='{request.method}'"
+        f" url='{request.url}' error='{exc}'"
+    )
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Произошла непредвиденная ошибка на стороне сервера"},
-    )
-
-
-@app.exception_handler(RequestValidationError)
-async def request_validation_exception_handler(
-    _request: Request, exc: RequestValidationError
-) -> JSONResponse:
-    """
-    Глобальный обработчик исключений при валидации сигнатур входящих запросов,
-    которые не были пойманы выше.
-    """
-
-    return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        content={"detail": create_message_from_validation_error(exc)},
     )

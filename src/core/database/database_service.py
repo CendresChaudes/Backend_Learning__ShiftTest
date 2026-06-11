@@ -6,6 +6,7 @@ from fastapi import Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.configs.logging import logger
 from src.core.database.database_dto import PingDTO
 from src.core.database.database_session import get_db
 
@@ -25,6 +26,7 @@ class DatabaseService:
         try:
             await self.db.execute(text("SELECT 1"))
         except Exception as error:
+            logger.error(DATABASE_IS_UNAVAILABLE)
             raise Exception(DATABASE_IS_UNAVAILABLE) from error
 
         return PingDTO(status=DATABASE_IS_AVAILABLE)

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.configs.logging import logger
 from src.core.database.database_session import get_db
 from src.modules.booking.booking_entity import BookingEntity
 from src.modules.user.user_entity import ERole
@@ -52,9 +53,9 @@ class BookingService:
         )
 
         if existing_booking is not None:
-            raise AlreadyExistsError(
-                f"Комната уже забронирована на date={payload.date}"
-            )
+            error_message = f"Комната уже забронирована на date={payload.date}"
+            logger.error(error_message)
+            raise AlreadyExistsError(error_message)
 
         booking = self.repository.create(user_id=user_id, **payload.model_dump())
         await self.db.commit()
@@ -102,9 +103,12 @@ class BookingService:
         room = await self.repository.get_by_id(booking_id=booking_id)
 
         if room is None:
-            raise NotFoundError(
-                get_booking_is_not_exist_error_message(booking_id=booking_id)
+            error_message = get_booking_is_not_exist_error_message(
+                booking_id=booking_id
             )
+
+            logger.error(error_message)
+            raise NotFoundError(error_message)
 
         return room
 
@@ -112,7 +116,9 @@ class BookingService:
         self, booking: BookingEntity, user_id: int, user_role: ERole
     ) -> None:
         if booking.user_id != user_id or user_role.value != ERole.admin.value:
-            raise ForbiddenError(FORBIDDEN_ACCESS_TO_BOOKING)
+            error_message = FORBIDDEN_ACCESS_TO_BOOKING
+            logger.error(error_message)
+            raise ForbiddenError(error_message)
 
 
 def get_booking_service(db: Annotated[AsyncSession, Depends(get_db)]) -> BookingService:

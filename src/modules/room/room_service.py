@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.configs.logging import logger
 from src.core.database.database_session import get_db
 from src.modules.room.room_entity import RoomEntity
 from src.shared.errors import NotFoundError
@@ -71,7 +72,9 @@ class RoomService:
         room = await self.repository.get_by_id(room_id=room_id)
 
         if room is None:
-            raise NotFoundError(get_room_is_not_exist_error_message(room_id=room_id))
+            user_message = get_room_is_not_exist_error_message(room_id=room_id)
+            logger.error(user_message)
+            raise NotFoundError(user_message)
 
         return RoomDTO.model_validate(room, from_attributes=True)
 

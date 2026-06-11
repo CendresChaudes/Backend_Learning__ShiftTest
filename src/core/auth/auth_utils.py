@@ -52,7 +52,6 @@ async def get_current_user(
             raise TypeError("sub (user_id) должен быть строкой")
 
     except (JWTError, KeyError, ValueError) as error:
-        print(error)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Невалидный токен",
