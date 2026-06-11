@@ -12,6 +12,13 @@
 ![Poetry](https://img.shields.io/badge/Poetry-black?logo=poetry&logoColor=fff&style=flat-square)
 ![Docker](https://img.shields.io/badge/Docker-black?logo=docker&logoColor=fff&style=flat-square)
 
-## Команды
+## ▶️ Команды
 
-Все необходимые команды располагаются в Makefile
+Все необходимые команды располагаются в `Makefile`.
+
+Инициализация и запуск приложения:
+
+- установить глобально `poetry`,
+- запустить команду `make init`,
+- создать файл `.env` и заполнить переменные окружения по примеру из `.env.example`,
+- запустить команд `make docker-run`.
