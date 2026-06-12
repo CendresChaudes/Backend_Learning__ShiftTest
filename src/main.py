@@ -1,5 +1,6 @@
 """Точка входа в приложение."""
 
+import re
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
 
@@ -7,7 +8,9 @@ from fastapi import APIRouter, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
+from psycopg.errors import UniqueViolation
 from pydantic import ValidationError
+from sqlalchemy.exc import IntegrityError
 
 from src.core.configs.logging import logger
 from src.modules.slot.slot_router import router as slot_router
@@ -112,11 +115,8 @@ app.openapi = custom_openapi  # type: ignore[method-assign]
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Глобальный обработчик исключений, которые не были пойманы выше."""
 
-    if isinstance(exc, ValidationError):
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            content={"detail": create_message_from_validation_error(exc)},
-        )
+    if isinstance(exc, (ValidationError, RequestValidationError, IntegrityError)):
+        raise exc
 
     logger.error(
         f"Необработанная ошибка при запросе method='{request.method}'"
@@ -125,20 +125,70 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": "Произошла непредвиденная ошибка на стороне сервера"},
+        content={"detail": str(exc)},
     )
 
 
-@app.exception_handler(RequestValidationError)
-async def request_validation_exception_handler(
-    _request: Request, exc: RequestValidationError
+@app.exception_handler(ValidationError)
+async def validation_error_handler(
+    _request: Request, exc: ValidationError
 ) -> JSONResponse:
-    """
-    Глобальный обработчик исключений при валидации сигнатур входящих запросов,
-    которые не были пойманы выше.
-    """
+    """Глобальный обработчик исключения ValidationError."""
 
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content={"detail": create_message_from_validation_error(exc)},
     )
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_error_handler(
+    _request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    """Глобальный обработчик исключения RequestValidationError."""
+
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        content={"detail": create_message_from_validation_error(exc)},
+    )
+
+
+@app.exception_handler(IntegrityError)
+async def integrity_error_handler(
+    _request: Request, exc: IntegrityError
+) -> JSONResponse:
+    """Глобальный обработчик исключения IntegrityError."""
+
+    orig = getattr(exc, "orig", None)
+
+    if orig and isinstance(orig, UniqueViolation):
+        field = parse_unique_violation_detail(str(orig))
+        detail = {"detail": "Ошибка уникальности значения поля"}
+
+        if field:
+            detail = {"detail": f"Значение поля '{field}' уже существует"}
+
+        return JSONResponse(status_code=status.HTTP_409_CONFLICT, content=detail)
+
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content="Ошибка целостности базы данных",
+    )
+
+
+def parse_unique_violation_detail(raw_message: str) -> str | None:
+    """Парсит сообщение об ошибке типа UniqueViolation."""
+
+    message_with_field = re.search(r"Key \((?P<field>[^\)]+)\)=\([^\)]+\)", raw_message)
+
+    if message_with_field:
+        return message_with_field.group("field")
+
+    message_with_unique_constraint = re.search(
+        r'unique constraint "(?P<constraint>[^"]+)"', raw_message
+    )
+
+    if message_with_unique_constraint:
+        return message_with_unique_constraint.group("constraint")
+
+    return None
