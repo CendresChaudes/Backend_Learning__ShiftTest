@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
 
 from fastapi import APIRouter, FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
@@ -125,4 +126,19 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Произошла непредвиденная ошибка на стороне сервера"},
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_exception_handler(
+    _request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    """
+    Глобальный обработчик исключений при валидации сигнатур входящих запросов,
+    которые не были пойманы выше.
+    """
+
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        content={"detail": create_message_from_validation_error(exc)},
     )
