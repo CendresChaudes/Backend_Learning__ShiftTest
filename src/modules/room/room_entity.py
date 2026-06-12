@@ -19,7 +19,9 @@ class RoomEntity(BaseEntity):
     description: Mapped[str] = mapped_column(default=None, nullable=True)
 
     slots: Mapped[list["SlotEntity"]] = relationship(
-        "SlotEntity", back_populates="room", cascade="all, delete-orphan"
+        "SlotEntity",
+        back_populates="room",
+        cascade="all, delete-orphan",
     )
 
 

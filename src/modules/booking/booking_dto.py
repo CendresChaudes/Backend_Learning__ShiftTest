@@ -1,5 +1,7 @@
 """Схемы для работы с бронированием."""
 
+from typing import cast
+
 from pydantic import BaseModel, model_validator
 
 
@@ -13,22 +15,22 @@ class BookingCreateDTO(BaseModel):
 class BookingUpdateDTO(BaseModel):
     """Схема для редактирования комнаты."""
 
-    slot_id: int | None
-    date: str | None
+    slot_id: int | None = None
+    date: str | None = None
 
     @model_validator(mode="before")
-    def forbid_explicit_null(
-        self, values: dict[str, str | None]
-    ) -> dict[str, str | None]:
-        """Запрещает передавать явный null в поле заголовка"""
+    def forbid_explicit_null(self) -> dict[str, str | None]:
+        """Запрещает передавать явный null в поле заголовка."""
 
-        if "slot_id" in values and values["slot_id"] is None:
+        data = cast(dict[str, str | None], self)
+
+        if "slot_id" in data and data["slot_id"] is None:
             raise ValueError("Поле 'slot_id' не может быть явно указано как null")
 
-        if "date" in values and values["date"] is None:
+        if "date" in data and data["date"] is None:
             raise ValueError("Поле 'date' не может быть явно указано как null")
 
-        return values
+        return data
 
 
 class BookingDTO(BookingCreateDTO):

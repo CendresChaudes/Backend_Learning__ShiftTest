@@ -62,7 +62,7 @@ class UserService:
         old_user_entity = UserEntity(**old_user_dto.model_dump())
 
         updated_user_entity = self.repository.update(
-            old_user=old_user_entity, **payload.model_dump()
+            old_user=old_user_entity, **payload.model_dump(exclude_unset=True)
         )
 
         await self.db.commit()

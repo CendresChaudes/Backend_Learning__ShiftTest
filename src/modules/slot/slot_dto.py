@@ -1,5 +1,7 @@
 """Схемы для работы со слотами."""
 
+from typing import cast
+
 from pydantic import BaseModel, model_validator
 
 
@@ -13,22 +15,22 @@ class SlotCreateDTO(BaseModel):
 class SlotUpdateDTO(BaseModel):
     """Схема для редактирования слота."""
 
-    time: str | None
-    room_id: int | None
+    time: str | None = None
+    room_id: int | None = None
 
     @model_validator(mode="before")
-    def forbid_explicit_null(
-        self, values: dict[str, str | int | None]
-    ) -> dict[str, str | int | None]:
-        """Запрещает передавать явный null в поле заголовка"""
+    def forbid_explicit_null(self) -> dict[str, str | int | None]:
+        """Запрещает передавать явный null в поле заголовка."""
 
-        if "time" in values and values["time"] is None:
+        data = cast(dict[str, str | int | None], self)
+
+        if "time" in data and data["time"] is None:
             raise ValueError("Поле 'time' не может быть явно указано как null")
 
-        if "room_id" in values and values["room_id"] is None:
+        if "room_id" in data and data["room_id"] is None:
             raise ValueError("Поле 'room_id' не может быть явно указано как null")
 
-        return values
+        return data
 
 
 class RoomInner(BaseModel):
@@ -36,7 +38,7 @@ class RoomInner(BaseModel):
 
     id: int
     title: str
-    description: str | None
+    description: str | None = None
 
 
 class SlotDTO(BaseModel):

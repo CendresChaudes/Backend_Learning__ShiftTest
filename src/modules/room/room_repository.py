@@ -36,7 +36,7 @@ class RoomRepository:
     def create(self, **new_room: dict[str, Any]) -> RoomEntity:
         """Создать комнату."""
 
-        room = RoomEntity(**new_room)
+        room = RoomEntity(**new_room, slots=[])
         self.db.add(instance=room)
 
         return room

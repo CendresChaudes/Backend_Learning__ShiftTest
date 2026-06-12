@@ -47,11 +47,10 @@ class RoomService:
     async def update(self, room_id: int, payload: RoomUpdateDTO) -> RoomDTO:
         """Редактировать комнату."""
 
-        old_room_dto = await self.__get_one(room_id=room_id)
-        old_room_entity = RoomEntity(**old_room_dto.model_dump())
+        old_room_entity = await self.__get_one(room_id=room_id)
 
         new_room = self.repository.update(
-            old_room=old_room_entity, **payload.model_dump()
+            old_room=old_room_entity, **payload.model_dump(exclude_unset=True)
         )
 
         await self.db.commit()
@@ -61,12 +60,11 @@ class RoomService:
     async def delete(self, room_id: int) -> None:
         """Удалить комнату."""
 
-        room_dto = await self.__get_one(room_id=room_id)
-        room_entity = RoomEntity(**room_dto.model_dump())
+        room_entity = await self.__get_one(room_id=room_id)
         await self.repository.delete(room=room_entity)
         await self.db.commit()
 
-    async def __get_one(self, room_id: int) -> RoomDTO:
+    async def __get_one(self, room_id: int) -> RoomEntity:
         """Получить комнату."""
 
         room = await self.repository.get_by_id(room_id=room_id)
@@ -76,7 +74,7 @@ class RoomService:
             logger.error(user_message)
             raise NotFoundError(user_message)
 
-        return RoomDTO.model_validate(room, from_attributes=True)
+        return room
 
 
 def get_room_service(db: Annotated[AsyncSession, Depends(get_db)]) -> RoomService:

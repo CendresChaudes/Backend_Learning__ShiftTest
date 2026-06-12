@@ -76,7 +76,7 @@ class SlotService:
             await self.__check_is_room_exist(room_id=room_id)
 
         updated_slot_entity = self.slot_repository.update(
-            old_slot=old_slot_entity, **payload.model_dump()
+            old_slot=old_slot_entity, **payload.model_dump(exclude_unset=True)
         )
 
         await self.db.commit()

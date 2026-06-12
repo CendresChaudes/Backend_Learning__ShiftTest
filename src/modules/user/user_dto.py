@@ -1,5 +1,7 @@
 """Схемы для пользователя."""
 
+from typing import cast
+
 from pydantic import BaseModel, EmailStr, model_validator
 
 from .user_entity import ERole
@@ -8,22 +10,22 @@ from .user_entity import ERole
 class UserUpdateDTO(BaseModel):
     """Схема редактирования пользователя."""
 
-    mail: EmailStr | None
-    name: str | None
-    surname: str | None
-    patronymic: str | None
-    role: ERole | None
+    mail: EmailStr | None = None
+    name: str | None = None
+    surname: str | None = None
+    patronymic: str | None = None
+    role: ERole | None = None
 
     @model_validator(mode="before")
-    def forbid_explicit_null(
-        self, values: dict[str, str | None]
-    ) -> dict[str, str | None]:
-        """Запрещает передавать явный null в поле заголовка"""
+    def forbid_explicit_null(self) -> dict[str, str | None]:
+        """Запрещает передавать явный null в поле заголовка."""
 
-        if "patronymic" in values and values["patronymic"] is None:
+        data = cast(dict[str, str | None], self)
+
+        if "patronymic" in data and data["patronymic"] is None:
             raise ValueError("Поле 'patronymic' не может быть явно указано как null")
 
-        return values
+        return data
 
 
 class UserDTO(BaseModel):
@@ -33,7 +35,7 @@ class UserDTO(BaseModel):
     mail: EmailStr
     name: str
     surname: str
-    patronymic: str | None
+    patronymic: str | None = None
     role: ERole
 
 

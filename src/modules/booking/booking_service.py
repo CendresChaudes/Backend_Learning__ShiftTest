@@ -75,7 +75,7 @@ class BookingService:
         )
 
         new_booking_entity = self.repository.update(
-            old_booking=old_booking_entity, **payload.model_dump()
+            old_booking=old_booking_entity, **payload.model_dump(exclude_unset=True)
         )
 
         await self.db.commit()
