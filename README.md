@@ -37,21 +37,20 @@
 - URL: `/api/v1/auth/register`
 - HTTP-method: `POST`
 - Payload: `{
-  "mail": "example_user@example.com",
-  "password": "string",
-  "name": "string",
-  "surname": "string",
-  "patronymic": "string",
+  "mail": "user@example.com",
+  "password": "qwerty123",
+  "name": "name",
+  "surname": "surname",
+  "patronymic": null,
   "role": "admin"
 }`
 - Code: `201`
 - Response: `{
   "id": 1,
-  "mail": "example_user@example.com",
-  "password": "string",
-  "name": "string",
-  "surname": "string",
-  "patronymic": "string",
+  "mail": "user@example.com",
+  "name": "name",
+  "surname": "surname",
+  "patronymic": null,
   "role": "admin"
 }`
 
