@@ -9,7 +9,6 @@ class SlotCreateDTO(BaseModel):
     """Схема для создания слота."""
 
     time: str
-    room_id: int
 
 
 class SlotUpdateDTO(BaseModel):
@@ -26,9 +25,6 @@ class SlotUpdateDTO(BaseModel):
 
         if "time" in data and data["time"] is None:
             raise ValueError("Поле 'time' не может быть явно указано как null")
-
-        if "room_id" in data and data["room_id"] is None:
-            raise ValueError("Поле 'room_id' не может быть явно указано как null")
 
         return data
 

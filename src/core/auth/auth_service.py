@@ -49,7 +49,9 @@ class AuthService:
         }
 
         created_user = self.user_repository.create(**user_to_create)
+        await self.db.flush()
         await self.db.commit()
+        await self.db.refresh(created_user)
 
         return UserDTO.model_validate(created_user, from_attributes=True)
 

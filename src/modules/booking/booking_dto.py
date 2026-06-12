@@ -4,6 +4,9 @@ from typing import cast
 
 from pydantic import BaseModel, model_validator
 
+from src.modules.slot.slot_dto import SlotDTO
+from src.modules.user.user_dto import UserDTO
+
 
 class BookingCreateDTO(BaseModel):
     """Схема для создания брони."""
@@ -33,10 +36,14 @@ class BookingUpdateDTO(BaseModel):
         return data
 
 
-class BookingDTO(BookingCreateDTO):
+class BookingDTO(BaseModel):
     """Схема брони."""
 
     id: int
+    date: str
+
+    slot: SlotDTO
+    user: UserDTO
 
 
 __all__ = ["BookingCreateDTO", "BookingUpdateDTO", "BookingDTO"]

@@ -27,7 +27,12 @@ class SlotRepository:
     async def get_all_by_room_id(self, room_id: int) -> list[SlotEntity]:
         """Получить все слоты."""
 
-        query = select(SlotEntity).where(SlotEntity.room_id == room_id)
+        query = (
+            select(SlotEntity)
+            .options(selectinload(SlotEntity.room))
+            .where(SlotEntity.room_id == room_id)
+        )
+
         response = await self.db.execute(statement=query)
         result = list(response.scalars().all())
 
@@ -36,7 +41,12 @@ class SlotRepository:
     async def get_by_id(self, slot_id: int) -> SlotEntity | None:
         """Получить слот по id."""
 
-        query = select(SlotEntity).where(SlotEntity.id == slot_id)
+        query = (
+            select(SlotEntity)
+            .options(selectinload(SlotEntity.room))
+            .where(SlotEntity.id == slot_id)
+        )
+
         response = await self.db.execute(statement=query)
         result = response.scalar_one_or_none()
 

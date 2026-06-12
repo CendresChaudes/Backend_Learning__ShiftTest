@@ -55,7 +55,9 @@ class BookingService:
             raise AlreadyExistsError(error_message)
 
         booking = self.repository.create(user_id=user_id, **payload.model_dump())
+        await self.db.flush()
         await self.db.commit()
+        await self.db.refresh(booking)
 
         return BookingDTO.model_validate(booking, from_attributes=True)
 

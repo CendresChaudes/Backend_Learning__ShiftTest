@@ -4,6 +4,9 @@ from typing import Any
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from src.modules.slot.slot_entity import SlotEntity
 
 from .booking_entity import BookingEntity
 
@@ -17,7 +20,11 @@ class BookingRepository:
     async def get_all(self) -> list[BookingEntity]:
         """Получить все бронирования."""
 
-        query = select(BookingEntity)
+        query = select(BookingEntity).options(
+            selectinload(BookingEntity.slot).selectinload(SlotEntity.room),
+            selectinload(BookingEntity.user),
+        )
+
         response = await self.db.execute(statement=query)
         result = list(response.scalars().all())
 
@@ -26,7 +33,13 @@ class BookingRepository:
     async def get_by_id(self, booking_id: int) -> BookingEntity | None:
         """Получить бронирование по id."""
 
-        query = select(BookingEntity).where(BookingEntity.id == booking_id)
+        query = (
+            select(BookingEntity).options(
+                selectinload(BookingEntity.slot).selectinload(SlotEntity.room),
+                selectinload(BookingEntity.user),
+            )
+        ).where(BookingEntity.id == booking_id)
+
         response = await self.db.execute(statement=query)
         result = response.scalar_one_or_none()
 
@@ -35,7 +48,13 @@ class BookingRepository:
     async def get_all_by_date(self, date: str) -> list[BookingEntity]:
         """Получить бронирования по date."""
 
-        query = select(BookingEntity).where(BookingEntity.date == date)
+        query = (
+            select(BookingEntity).options(
+                selectinload(BookingEntity.slot).selectinload(SlotEntity.room),
+                selectinload(BookingEntity.user),
+            )
+        ).where(BookingEntity.date == date)
+
         response = await self.db.execute(statement=query)
         result = list(response.scalars().all())
 
@@ -46,9 +65,12 @@ class BookingRepository:
     ) -> BookingEntity | None:
         """Получить бронирование по slot_id и date."""
 
-        query = select(BookingEntity).where(
-            BookingEntity.slot_id == slot_id, BookingEntity.date == date
-        )
+        query = (
+            select(BookingEntity).options(
+                selectinload(BookingEntity.slot).selectinload(SlotEntity.room),
+                selectinload(BookingEntity.user),
+            )
+        ).where(BookingEntity.slot_id == slot_id, BookingEntity.date == date)
 
         response = await self.db.execute(statement=query)
         result = response.scalar_one_or_none()

@@ -1,6 +1,6 @@
 """Сервис для работы со слотами."""
 
-from typing import Annotated
+from typing import Annotated, cast
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -60,10 +60,27 @@ class SlotService:
         """Создать слот."""
 
         await self.__check_is_room_exist(room_id=room_id)
-        slot = self.slot_repository.create(**payload.model_dump())
+        data_for_create = {**payload.model_dump(), "room_id": room_id}
+        created_slot = self.slot_repository.create(**data_for_create)
+        await self.db.flush()
         await self.db.commit()
+        await self.db.refresh(instance=created_slot)
 
-        return SlotDTO.model_validate(slot, from_attributes=True)
+        slot = await self.slot_repository.get_by_id(slot_id=created_slot.id)
+        slot = cast(SlotEntity, slot)
+        room_slot = slot.room
+
+        slot_dict = {
+            "id": slot.id,
+            "time": slot.time,
+            "room": {
+                "id": room_slot.id,
+                "title": room_slot.title,
+                "description": room_slot.description,
+            },
+        }
+
+        return SlotDTO.model_validate(slot_dict)
 
     async def update(
         self, room_id: int, slot_id: int, payload: SlotUpdateDTO
