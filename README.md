@@ -22,3 +22,58 @@
 - запустить команду `make init`,
 - создать файл `.env` и заполнить переменные окружения по примеру из `.env.example`,
 - запустить команд `make docker-run`.
+
+## 🗒️ Примеры работы приложения
+
+1) Проверка доступности базы данных
+
+- URL: `/api/v1/ping`
+- HTTP-method: `GET`
+- Code: `200`
+- Response: `{ "status": "БД доступна :)" }`
+
+2) Зарегистрироваться
+
+- URL: `/api/v1/auth/register`
+- HTTP-method: `POST`
+- Payload: `{
+  "mail": "example_user@example.com",
+  "password": "string",
+  "name": "string",
+  "surname": "string",
+  "patronymic": "string",
+  "role": "admin"
+}`
+- Code: `201`
+- Response: `{
+  "id": 1,
+  "mail": "example_user@example.com",
+  "password": "string",
+  "name": "string",
+  "surname": "string",
+  "patronymic": "string",
+  "role": "admin"
+}`
+
+3) Редактировать комнату
+
+- URL: `/api/v1/rooms/1`
+- HTTP-method: `PATCH`
+- Payload: `{
+    "title": "example title",
+    "description": "example description"
+}`
+- Code: `200`
+- Response: `{
+    "id": 1
+    "title": "example title",
+    "description": "example description",
+}`
+
+4) Удалить бронирование
+
+- URL: `/api/v1/bookings/1`
+- HTTP-method: `DELETE`
+- Payload: `None`
+- Code: `204`
+- Response: `None`
