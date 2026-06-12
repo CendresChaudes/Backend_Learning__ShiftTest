@@ -27,7 +27,12 @@ class RoomRepository:
     async def get_by_id(self, room_id: int) -> RoomEntity | None:
         """Получить комнату по id."""
 
-        query = select(RoomEntity).where(RoomEntity.id == room_id)
+        query = (
+            select(RoomEntity)
+            .options(selectinload(RoomEntity.slots))
+            .where(RoomEntity.id == room_id)
+        )
+
         response = await self.db.execute(statement=query)
         result = response.scalar_one_or_none()
 
