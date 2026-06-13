@@ -5,6 +5,12 @@ from datetime import date, datetime
 from pydantic import BaseModel, field_validator
 
 
+def get_slot_is_not_exist_error_message(slot_id: int) -> str:
+    """Функция для получения сообщения об ошибке нахождения."""
+
+    return f"Комната slot_id={slot_id} не найдена"
+
+
 class DateModel(BaseModel):
     """Модель даты."""
 
@@ -36,3 +42,6 @@ class DateModel(BaseModel):
             raise ValueError("Дата не может быть в прошлом")
 
         return value
+
+
+__all__ = ["get_slot_is_not_exist_error_message", "DateModel"]

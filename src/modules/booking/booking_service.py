@@ -7,20 +7,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.configs.logging import logger
 from src.core.database.database_session import get_db
-from src.modules.booking.booking_entity import BookingEntity
 from src.modules.user.user_entity import ERole
 from src.shared.errors import AlreadyExistsError, ForbiddenError, NotFoundError
 
 from .booking_dto import BookingCreateDTO, BookingDTO, BookingUpdateDTO
+from .booking_entity import BookingEntity
 from .booking_repository import BookingRepository
+from .booking_utils import get_booking_is_not_exist_error_message
 
 FORBIDDEN_ACCESS_TO_BOOKING = "Доступ к бронированиям других пользователей запрещен"
-
-
-def get_booking_is_not_exist_error_message(booking_id: int) -> str:
-    """Функция для получения сообщения об ошибке нахождения."""
-
-    return f"Бронирование booking_id={booking_id} не найдено"
 
 
 class BookingService:

@@ -12,12 +12,7 @@ from src.shared.errors import ForbiddenError, NotFoundError
 from .user_dto import UserDTO, UserUpdateDTO
 from .user_entity import ERole, UserEntity
 from .user_repository import UserRepository
-
-
-def get_user_is_not_exist_error_message(user_id: int) -> str:
-    """Функция для получения сообщения об ошибке нахождения."""
-
-    return f"Пользователь user_id={user_id} не найден"
+from .user_utils import get_user_is_not_exist_error_message
 
 
 class UserService:

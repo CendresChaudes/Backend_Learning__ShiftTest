@@ -7,17 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.configs.logging import logger
 from src.core.database.database_session import get_db
-from src.modules.room.room_entity import RoomEntity
 from src.shared.errors import NotFoundError
 
 from .room_dto import RoomCreateDTO, RoomDTO, RoomUpdateDTO
+from .room_entity import RoomEntity
 from .room_repository import RoomRepository
-
-
-def get_room_is_not_exist_error_message(room_id: int) -> str:
-    """Функция для получения сообщения об ошибке нахождения."""
-
-    return f"Комната room_id={room_id} не найдена"
+from .room_utils import get_room_is_not_exist_error_message
 
 
 class RoomService:

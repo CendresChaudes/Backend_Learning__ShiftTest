@@ -10,18 +10,12 @@ from src.core.database.database_session import get_db
 from src.modules.booking.booking_repository import BookingRepository
 from src.modules.room.room_repository import RoomRepository
 from src.modules.room.room_service import get_room_is_not_exist_error_message
-from src.modules.slot.slot_entity import SlotEntity
-from src.modules.slot.slot_utils import DateModel
 from src.shared.errors import NotFoundError
 
 from .slot_dto import SlotCreateDTO, SlotDTO, SlotUpdateDTO
+from .slot_entity import SlotEntity
 from .slot_repository import SlotRepository
-
-
-def get_slot_is_not_exist_error_message(slot_id: int) -> str:
-    """Функция для получения сообщения об ошибке нахождения."""
-
-    return f"Комната slot_id={slot_id} не найдена"
+from .slot_utils import DateModel, get_slot_is_not_exist_error_message
 
 
 class SlotService:
