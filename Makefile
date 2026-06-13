@@ -12,7 +12,7 @@ start: ## Запустить сервер разработки Uvicorn
 	$(RUN_POETRY) uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 
 test: ## Запустить тесты с покрытием (Pytest)
-	$(RUN_POETRY) pytest --cov=src --cov-report=term-missing --cov-report=html --ignore-glob="**/__init__.py"
+	$(RUN_POETRY) pytest
 
 lint: ## Запустить линтеры и проверки кода (pre-commit)
 	$(RUN_POETRY) pre-commit run --all-files --verbose

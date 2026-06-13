@@ -8,7 +8,6 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-black?logo=postgresql&logoColor=fff&style=flat-square)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-black?logo=sqlalchemy&logoColor=fff&style=flat-square)
 ![Pytest](https://img.shields.io/badge/Pytest-black?logo=pytest&logoColor=fff&style=flat-square)
-![Sphinx](https://img.shields.io/badge/Sphinx-black?logo=sphinx&logoColor=fff&style=flat-square)
 ![Poetry](https://img.shields.io/badge/Poetry-black?logo=poetry&logoColor=fff&style=flat-square)
 ![Docker](https://img.shields.io/badge/Docker-black?logo=docker&logoColor=fff&style=flat-square)
 
@@ -21,7 +20,12 @@
 - установить глобально `poetry`,
 - запустить команду `make init`,
 - создать файл `.env` и заполнить переменные окружения по примеру из `.env.example`,
-- запустить команд `make docker-run`.
+- запустить команду `make docker-run`.
+
+Тестирование приложения:
+
+- создать файл `.env.test` и заполнить переменные окружения по примеру из `.env.example`,
+- запустить команду `make test`.
 
 ## 🗒️ Примеры работы приложения
 

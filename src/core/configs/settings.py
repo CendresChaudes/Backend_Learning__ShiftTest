@@ -6,6 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Глобальные настройки приложения, загружаемые из переменных окружения."""
 
+    MODE: str
+
     DB_USER: str
     DB_PASS: str
     DB_HOST: str

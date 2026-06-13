@@ -35,6 +35,7 @@ dev = [
 test = [
     "pytest (==9.0.3)",
     "pytest-cov (==7.1.0)",
+    "pytest-dotenv (==0.5.2)",
 ]
 docs = [
     "interrogate (==1.7.0)",
@@ -75,5 +76,12 @@ style = "sphinx"
 verbose = 2
 
 [tool.pytest]
+addopts = [
+  "--cov=src",
+  "--cov-report=term-missing",
+  "--cov-report=html",
+]
 python_files = ["test_*.py"]
+pythonpath = [".", "src"]
 testpaths = ["tests/"]
+env_files = [".env.test"]
