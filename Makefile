@@ -3,7 +3,7 @@ RUN_POETRY=poetry run
 RUN_ALEMBIC=$(RUN_POETRY) python -m alembic
 
 # --- Инициализация проекта ---
-init: ## Установить зависимости и настроить pre-commit хуки
+init: ## Установить зависимости и настроить pre-commit хуки (иногда не работает без VPN)
 	poetry install --no-root --with dev,test,docs
 	$(RUN_POETRY) pre-commit install
 
