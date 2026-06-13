@@ -36,6 +36,7 @@ test = [
     "pytest (==9.0.3)",
     "pytest-cov (==7.1.0)",
     "pytest-dotenv (==0.5.2)",
+    "httpx2 (==2.4.0)",
 ]
 docs = [
     "interrogate (==1.7.0)",
