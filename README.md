@@ -2,14 +2,14 @@
 
 ## ⚙️ Стек
 
-![Python](https://img.shields.io/badge/Python-black?logo=python&logoColor=fff&style=flat-square)
-![FastAPI](https://img.shields.io/badge/FastAPI-black?logo=fastapi&logoColor=fff&style=flat-square)
-![Pydantic](https://img.shields.io/badge/Pydantic-black?logo=pydantic&logoColor=fff&style=flat-square)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-black?logo=postgresql&logoColor=fff&style=flat-square)
-![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-black?logo=sqlalchemy&logoColor=fff&style=flat-square)
-![Pytest](https://img.shields.io/badge/Pytest-black?logo=pytest&logoColor=fff&style=flat-square)
-![Poetry](https://img.shields.io/badge/Poetry-black?logo=poetry&logoColor=fff&style=flat-square)
-![Docker](https://img.shields.io/badge/Docker-black?logo=docker&logoColor=fff&style=flat-square)
+![Python](https://img.shields.io/badge/Python-black?style=for-the-badge&logo=python&logoColor=fff)
+![FastAPI](https://img.shields.io/badge/FastAPI-black?style=for-the-badge&logo=fastapi&logoColor=fff)
+![Pydantic](https://img.shields.io/badge/Pydantic-black?style=for-the-badge&logo=pydantic&logoColor=fff)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-black?style=for-the-badge&logo=postgresql&logoColor=fff)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-black?style=for-the-badge&logo=sqlalchemy&logoColor=fff)
+![Pytest](https://img.shields.io/badge/Pytest-black?style=for-the-badge&logo=pytest&logoColor=fff)
+![Poetry](https://img.shields.io/badge/Poetry-black?style=for-the-badge&logo=poetry&logoColor=fff)
+![Docker](https://img.shields.io/badge/Docker-black?style=for-the-badge&logo=docker&logoColor=fff)
 
 ## ▶️ Команды
 
