@@ -34,12 +34,7 @@ class UserService:
     async def get_one(self, user_id: int) -> UserDTO:
         """Получить пользователя."""
 
-        user = await self.repository.get_by_id(user_id=user_id)
-
-        if user is None:
-            error_message = get_user_is_not_exist_error_message(user_id=user_id)
-            logger.error(error_message)
-            raise NotFoundError(error_message)
+        user = await self.__get_one(user_id=user_id)
 
         return UserDTO.model_validate(user, from_attributes=True)
 
@@ -48,26 +43,25 @@ class UserService:
     ) -> UserDTO:
         """Редактировать пользователя."""
 
-        if user_id != me_id or me_role.value != ERole.admin.value:
-            error_message = "Доступ к удалению другого пользователя запрещен"
+        if user_id != me_id and me_role.value != ERole.admin.value:
+            error_message = "Доступ к редактированию другого пользователя запрещен"
             logger.error(error_message)
             raise ForbiddenError(error_message)
 
-        old_user_dto = await self.get_one(user_id=user_id)
-        old_user_entity = UserEntity(**old_user_dto.model_dump())
+        old_user = await self.__get_one(user_id=user_id)
 
-        updated_user_entity = self.repository.update(
-            old_user=old_user_entity, **payload.model_dump(exclude_unset=True)
+        updated_user = self.repository.update(
+            old_user=old_user, **payload.model_dump(exclude_unset=True)
         )
 
         await self.db.commit()
 
-        return UserDTO.model_validate(updated_user_entity, from_attributes=True)
+        return UserDTO.model_validate(updated_user, from_attributes=True)
 
     async def delete(self, user_id: int, me_id: int, me_role: ERole) -> None:
         """Удалить пользователя."""
 
-        if user_id != me_id or me_role.value != ERole.admin.value:
+        if user_id != me_id and me_role.value != ERole.admin.value:
             error_message = "Доступ к удалению другого пользователя запрещен"
             logger.error(error_message)
             raise ForbiddenError(error_message)
@@ -76,6 +70,18 @@ class UserService:
         user_entity = UserEntity(**user_dto.model_dump())
         await self.repository.delete(user=user_entity)
         await self.db.commit()
+
+    async def __get_one(self, user_id: int) -> UserEntity:
+        """Получить комнату."""
+
+        user = await self.repository.get_by_id(user_id=user_id)
+
+        if user is None:
+            error_message = get_user_is_not_exist_error_message(user_id=user_id)
+            logger.error(error_message)
+            raise NotFoundError(error_message)
+
+        return user
 
 
 def get_user_service(db: Annotated[AsyncSession, Depends(get_db)]) -> UserService:

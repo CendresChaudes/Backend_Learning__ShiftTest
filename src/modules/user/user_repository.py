@@ -57,12 +57,14 @@ class UserRepository:
     ) -> UserEntity:
         """Редактировать пользователя."""
 
-        room = old_user
+        user = old_user
 
         for key, value in updated_user.items():
-            setattr(room, key, value)
+            setattr(user, key, value)
 
-        return room
+        self.db.add(instance=user)
+
+        return user
 
     async def delete(self, user: UserEntity) -> None:
         """Удалить пользователя."""
