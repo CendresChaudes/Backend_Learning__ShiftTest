@@ -70,6 +70,8 @@ class SlotRepository:
         for key, value in updated_slot.items():
             setattr(slot, key, value)
 
+        self.db.add(instance=slot)
+
         return slot
 
     async def delete(self, slot: SlotEntity) -> None:

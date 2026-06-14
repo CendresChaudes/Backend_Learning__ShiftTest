@@ -15,7 +15,6 @@ class SlotUpdateDTO(BaseModel):
     """Схема для редактирования слота."""
 
     time: str | None = None
-    room_id: int | None = None
 
     @model_validator(mode="before")
     def forbid_explicit_null(self) -> dict[str, str | int | None]:
@@ -45,4 +44,11 @@ class SlotDTO(BaseModel):
     room: RoomInner
 
 
-__all__ = ["SlotCreateDTO", "SlotUpdateDTO", "SlotDTO"]
+class SlotItemGetAllDTO(BaseModel):
+    """Схема слота для эндпоинта /{room_id}/slots."""
+
+    id: int
+    time: str
+
+
+__all__ = ["SlotCreateDTO", "SlotUpdateDTO", "SlotDTO", "SlotItemGetAllDTO"]

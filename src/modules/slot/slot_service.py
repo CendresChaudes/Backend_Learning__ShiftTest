@@ -12,7 +12,7 @@ from src.modules.room.room_repository import RoomRepository
 from src.modules.room.room_service import get_room_is_not_exist_error_message
 from src.shared.errors import NotFoundError
 
-from .slot_dto import SlotCreateDTO, SlotDTO, SlotUpdateDTO
+from .slot_dto import SlotCreateDTO, SlotDTO, SlotItemGetAllDTO, SlotUpdateDTO
 from .slot_entity import SlotEntity
 from .slot_repository import SlotRepository
 from .slot_utils import DateModel, get_slot_is_not_exist_error_message
@@ -29,13 +29,16 @@ class SlotService:
         self.room_repository = RoomRepository(db=db)
         self.booking_repository = BookingRepository(db=db)
 
-    async def get_all_by_room_id(self, room_id: int) -> list[SlotDTO]:
-        """Получить все слоты."""
+    async def get_all_by_room_id(self, room_id: int) -> list[SlotItemGetAllDTO]:
+        """Получить все слоты комнаты."""
 
         await self.__check_is_room_exist(room_id=room_id)
         slots = await self.slot_repository.get_all_by_room_id(room_id=room_id)
 
-        return [SlotDTO.model_validate(slot, from_attributes=True) for slot in slots]
+        return [
+            SlotItemGetAllDTO.model_validate(slot, from_attributes=True)
+            for slot in slots
+        ]
 
     async def get_all_free_by_date(self, date: str) -> list[SlotDTO]:
         """Получить все свободные слоты по дате."""
@@ -56,9 +59,7 @@ class SlotService:
         await self.__check_is_room_exist(room_id=room_id)
         data_for_create = {**payload.model_dump(), "room_id": room_id}
         created_slot = self.slot_repository.create(**data_for_create)
-        await self.db.flush()
         await self.db.commit()
-        await self.db.refresh(instance=created_slot)
 
         slot = await self.slot_repository.get_by_id(slot_id=created_slot.id)
         slot = cast(SlotEntity, slot)
@@ -81,18 +82,16 @@ class SlotService:
     ) -> SlotDTO:
         """Редактировать слот."""
 
-        old_slot_entity = await self.__get_one(slot_id=slot_id)
+        await self.__check_is_room_exist(room_id=room_id)
+        old_slot = await self.__get_one(slot_id=slot_id)
 
-        if payload.room_id is not None:
-            await self.__check_is_room_exist(room_id=room_id)
-
-        updated_slot_entity = self.slot_repository.update(
-            old_slot=old_slot_entity, **payload.model_dump(exclude_unset=True)
+        updated_slot = self.slot_repository.update(
+            old_slot=old_slot, **payload.model_dump(exclude_unset=True)
         )
 
         await self.db.commit()
 
-        return SlotDTO.model_validate(updated_slot_entity, from_attributes=True)
+        return SlotDTO.model_validate(updated_slot, from_attributes=True)
 
     async def delete(self, room_id: int, slot_id: int) -> None:
         """Удалить слот."""
