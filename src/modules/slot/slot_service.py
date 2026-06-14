@@ -45,8 +45,8 @@ class SlotService:
         slots = await self.slot_repository.get_all()
 
         if len(bookings) != 0:
-            bookings_ids = [booking.id for booking in bookings]
-            slots = [slot for slot in slots if slot.id not in bookings_ids]
+            bookings_slot_ids = [booking.slot_id for booking in bookings]
+            slots = [slot for slot in slots if slot.id not in bookings_slot_ids]
 
         return [SlotDTO.model_validate(slot, from_attributes=True) for slot in slots]
 
