@@ -42,21 +42,21 @@ class RoomService:
     async def update(self, room_id: int, payload: RoomUpdateDTO) -> RoomDTO:
         """Редактировать комнату."""
 
-        old_room_entity = await self.__get_one(room_id=room_id)
+        old_room = await self.__get_one(room_id=room_id)
 
-        new_room = self.repository.update(
-            old_room=old_room_entity, **payload.model_dump(exclude_unset=True)
+        updated_room = self.repository.update(
+            old_room=old_room, **payload.model_dump(exclude_unset=True)
         )
 
         await self.db.commit()
 
-        return RoomDTO.model_validate(new_room, from_attributes=True)
+        return RoomDTO.model_validate(updated_room, from_attributes=True)
 
     async def delete(self, room_id: int) -> None:
         """Удалить комнату."""
 
-        room_entity = await self.__get_one(room_id=room_id)
-        await self.repository.delete(room=room_entity)
+        room = await self.__get_one(room_id=room_id)
+        await self.repository.delete(room=room)
         await self.db.commit()
 
     async def __get_one(self, room_id: int) -> RoomEntity:

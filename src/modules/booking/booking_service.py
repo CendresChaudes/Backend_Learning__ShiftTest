@@ -76,19 +76,19 @@ class BookingService:
     ) -> BookingDTO:
         """Редактировать бронирование."""
 
-        old_booking_entity = await self.__get_one(booking_id=booking_id)
+        old_booking = await self.__get_one(booking_id=booking_id)
 
         self.__check_has_user_access(
-            booking=old_booking_entity, user_id=user_id, user_role=user_role
+            booking=old_booking, user_id=user_id, user_role=user_role
         )
 
-        new_booking_entity = self.booking_repository.update(
-            old_booking=old_booking_entity, **payload.model_dump(exclude_unset=True)
+        updated_booking = self.booking_repository.update(
+            old_booking=old_booking, **payload.model_dump(exclude_unset=True)
         )
 
         await self.db.commit()
 
-        return BookingDTO.model_validate(new_booking_entity, from_attributes=True)
+        return BookingDTO.model_validate(updated_booking, from_attributes=True)
 
     async def delete(self, booking_id: int, user_id: int, user_role: ERole) -> None:
         """Удалить бронирование."""

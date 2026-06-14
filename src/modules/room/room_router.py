@@ -5,7 +5,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.core.auth.auth_utils import require_roles
-from src.modules.slot.slot_dto import SlotCreateDTO, SlotDTO, SlotUpdateDTO
+from src.modules.slot.slot_dto import (
+    SlotCreateDTO,
+    SlotDTO,
+    SlotItemGetAllDTO,
+    SlotUpdateDTO,
+)
 from src.modules.slot.slot_service import SlotService, get_slot_service
 from src.modules.user.user_entity import ERole, UserEntity
 from src.shared.errors import NotFoundError
@@ -120,14 +125,17 @@ async def delete_room(
 
 @router.get(
     path="/{room_id}/slots",
-    summary="Получить все временные слоты комнаты",
+    summary="Получить все слоты комнаты",
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: {
             "description": "Слоты успешно получены",
             "content": {
                 "application/json": {
-                    "schema": {"type": "array", "items": SlotDTO.model_json_schema()}
+                    "schema": {
+                        "type": "array",
+                        "items": SlotItemGetAllDTO.model_json_schema(),
+                    }
                 }
             },
         },
@@ -138,8 +146,8 @@ async def get_slots(
     room_id: int,
     slot_service: Annotated[SlotService, Depends(get_slot_service)],
     _user: Annotated[UserEntity, Depends(require_roles(ERole.admin.value))],
-) -> list[SlotDTO]:
-    """Получить все временные слоты комнаты."""
+) -> list[SlotItemGetAllDTO]:
+    """Получить все слоты комнаты."""
 
     try:
         return await slot_service.get_all_by_room_id(room_id=room_id)
