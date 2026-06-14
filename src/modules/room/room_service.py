@@ -34,11 +34,8 @@ class RoomService:
     async def create(self, payload: RoomCreateDTO) -> RoomDTO:
         """Создать комнату."""
 
-        created_room = self.repository.create(**payload.model_dump())
-        await self.db.flush()
+        room = self.repository.create(**payload.model_dump())
         await self.db.commit()
-        await self.db.refresh(created_room)
-        room = await self.repository.get_by_id(room_id=created_room.id)
 
         return RoomDTO.model_validate(room, from_attributes=True)
 

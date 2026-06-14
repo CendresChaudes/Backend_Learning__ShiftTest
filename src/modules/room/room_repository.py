@@ -56,6 +56,8 @@ class RoomRepository:
         for key, value in updated_room.items():
             setattr(room, key, value)
 
+        self.db.add(instance=room)
+
         return room
 
     async def delete(self, room: RoomEntity) -> None:
