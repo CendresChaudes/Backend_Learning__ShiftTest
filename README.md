@@ -38,7 +38,7 @@
 - Code: `200`
 - Response: `{ "status": "БД доступна :)" }`
 
-2) Зарегистрироваться
+2) Регистрация
 
 - URL: `/api/v1/auth/register`
 - HTTP-method: `POST`
@@ -60,7 +60,7 @@
   "role": "admin"
 }`
 
-3) Редактировать комнату
+3) Редактирование комнаты
 
 - URL: `/api/v1/rooms/1`
 - HTTP-method: `PATCH`
@@ -75,7 +75,7 @@
     "description": "example description",
 }`
 
-4) Удалить бронирование
+4) Удаление бронирования
 
 - URL: `/api/v1/bookings/1`
 - HTTP-method: `DELETE`
