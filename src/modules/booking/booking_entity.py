@@ -21,8 +21,8 @@ class BookingEntity(BaseEntity):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     date: Mapped[str]
 
-    slot: Mapped[SlotEntity] = relationship("SlotEntity", back_populates="booking")
-    user: Mapped["UserEntity"] = relationship("UserEntity", back_populates="booking")
+    slot: Mapped[SlotEntity] = relationship("SlotEntity", back_populates="bookings")
+    user: Mapped["UserEntity"] = relationship("UserEntity", back_populates="bookings")
 
 
 __all__ = ["BookingEntity"]

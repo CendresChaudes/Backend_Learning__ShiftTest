@@ -28,7 +28,7 @@ class UserEntity(BaseEntity):
     patronymic: Mapped[str] = mapped_column(default=None, nullable=True)
     role: Mapped[ERole] = mapped_column(SAEnum(ERole, name="role_enum"))
 
-    booking: Mapped[BookingEntity] = relationship(
+    bookings: Mapped[list[BookingEntity]] = relationship(
         "BookingEntity",
         back_populates="user",
         cascade="all, delete-orphan",

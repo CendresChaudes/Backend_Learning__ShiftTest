@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.modules.slot.slot_entity import SlotEntity
+from src.modules.user.user_entity import UserEntity
 
 from .booking_entity import BookingEntity
 
@@ -77,10 +78,12 @@ class BookingRepository:
 
         return result
 
-    def create(self, user_id: int, **new_booking: dict[str, Any]) -> BookingEntity:
+    def create(
+        self, user: UserEntity, slot: SlotEntity, **new_booking: dict[str, Any]
+    ) -> BookingEntity:
         """Создать бронирование."""
 
-        booking = BookingEntity(user_id=user_id, **new_booking)
+        booking = BookingEntity(user=user, slot=slot, **new_booking)
         self.db.add(instance=booking)
 
         return booking
@@ -94,6 +97,8 @@ class BookingRepository:
 
         for key, value in updated_booking.items():
             setattr(booking, key, value)
+
+        self.db.add(instance=booking)
 
         return booking
 

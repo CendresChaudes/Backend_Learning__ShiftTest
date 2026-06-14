@@ -22,7 +22,7 @@ class SlotEntity(BaseEntity):
 
     room: Mapped[RoomEntity] = relationship("RoomEntity", back_populates="slots")
 
-    booking: Mapped["BookingEntity"] = relationship(
+    bookings: Mapped[list["BookingEntity"]] = relationship(
         "BookingEntity",
         back_populates="slot",
         cascade="all, delete-orphan",
